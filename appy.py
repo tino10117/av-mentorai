@@ -1016,7 +1016,17 @@ with tab_mentor:
         render_chat_message("assistant", respuesta)
 
         st.info("Respuesta guardada. Tocá “🔊 Escuchar última respuesta” para generar audio.")
+if st.button("🔊 Escuchar última respuesta"):
+    try:
+        audio_path = generar_audio_openai(respuesta)
 
+        with open(audio_path, "rb") as audio_file:
+            audio_bytes = audio_file.read()
+
+        st.audio(audio_bytes, format="audio/mp3")
+
+    except Exception as e:
+        st.error(f"Error audio: {e}")
 # =========================================
 # TAB PROGRESO
 # =========================================
