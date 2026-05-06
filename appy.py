@@ -386,7 +386,7 @@ def generar_voz(texto):
     return audio_path
 
 def render_chat_message(role, content):
-    safe_content = html.escape(content).replace("\n", "<br>")
+    safe_content = content
 
     if role == "user":
         name = "Vos"
