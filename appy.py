@@ -687,16 +687,16 @@ if not st.session_state.logged_in:
     with c3: st.markdown('<div class="card"><h3>🔥 Gamificación</h3><p class="small-text">XP, rachas, niveles y desafíos diarios.</p></div>',unsafe_allow_html=True)
     lt,rt=st.tabs(["Iniciar sesión","Crear cuenta"])
     with lt:
-        el=st.text_input("Gmail",placeholder="tuemail@gmail.com")
-        pl=st.text_input("Contraseña",type="password")
-        if st.button("Entrar"):
+        el=st.text_input("Gmail",placeholder="tuemail@gmail.com",key="login_email")
+        pl=st.text_input("Contraseña",type="password",key="login_pass")
+        if st.button("Entrar",key="btn_entrar"):
             ul=login(el,pl)
             if ul: st.session_state.logged_in=True; st.session_state.user_data=ul; st.rerun()
             else: st.error("Gmail o contraseña incorrectos.")
     with rt:
-        nr=st.text_input("Nombre",placeholder="Valentino")
-        er=st.text_input("Gmail",placeholder="tuemail@gmail.com")
-        pr=st.text_input("Crear contraseña",type="password")
+        nr=st.text_input("Nombre",placeholder="Valentino",key="reg_nombre")
+        er=st.text_input("Gmail",placeholder="tuemail@gmail.com",key="reg_email")
+        pr=st.text_input("Crear contraseña",type="password",key="reg_pass")
         if st.button("Crear cuenta"):
             if not nr or not er or not pr: st.warning("Completá todos los campos.")
             elif "@gmail.com" not in er.lower(): st.warning("Usá un Gmail válido.")
