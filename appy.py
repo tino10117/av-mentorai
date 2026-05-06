@@ -11,7 +11,6 @@ import hashlib
 import random
 from datetime import date
 import pandas as pd
-import html
 import uuid
 
 load_dotenv()
@@ -38,6 +37,11 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+/* Ocultar botón GitHub y menú de Streamlit */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
 .stApp {
     background: radial-gradient(circle at top left, #1f2937 0%, #0b1120 45%, #020617 100%);
     color: white;
@@ -159,7 +163,7 @@ h1, h2, h3, h4, p, label, span {
     border-radius: 16px !important;
 }
 
-/* CELULAR */
+/* CELULAR - botones en grilla */
 @media (max-width: 768px) {
     .av-logo {
         font-size: 36px;
@@ -308,7 +312,7 @@ def progreso_nivel(xp):
         return (xp - 300) / 400
     if xp < 1200:
         return (xp - 700) / 500
-    return 1
+    return 1.0
 
 def desbloquear_logros(user):
     reglas = [
@@ -373,11 +377,12 @@ def transcribir_audio(audio_file):
     )
     return transcript.text
 
+# FIX: función única y correcta para generar voz
 def generar_voz(texto):
     audio_path = f"respuesta_av_mentorai_{uuid.uuid4().hex}.mp3"
 
     with client.audio.speech.with_streaming_response.create(
-        model="gpt-4o-mini-tts",
+        model="tts-1",
         voice="alloy",
         input=texto[:1200]
     ) as response:
@@ -386,8 +391,6 @@ def generar_voz(texto):
     return audio_path
 
 def render_chat_message(role, content):
-    safe_content = content
-
     if role == "user":
         name = "Vos"
         css_class = "chat-user"
@@ -398,7 +401,7 @@ def render_chat_message(role, content):
     st.markdown(f"""
     <div class="{css_class}">
         <div class="chat-name">{name}</div>
-        <div class="chat-text">{safe_content}</div>
+        <div class="chat-text">{content}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -409,7 +412,8 @@ def obtener_ultima_respuesta(user):
     return None
 
 def crear_system_prompt(user, modo, desafio):
-    memoria_larga = "\n".join(user.get("memoria_larga", [])[-10:])
+    # FIX: limitar memoria_larga para no inflar el prompt
+    memoria_larga = "\n".join(user.get("memoria_larga", [])[-6:])
 
     return f"""
     Eres AV MentorAI, un mentor personal premium de negocios, ventas, marketing y disciplina.
@@ -479,7 +483,7 @@ def generar_resumen_inteligente(user):
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4.1-mini",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
@@ -493,33 +497,52 @@ def generar_resumen_inteligente(user):
         )
 
         resumen = response.choices[0].message.content
+        # FIX: limitar memoria_larga a máximo 20 entradas
         user["memoria_larga"].append(resumen)
+        if len(user["memoria_larga"]) > 20:
+            user["memoria_larga"] = user["memoria_larga"][-20:]
         guardar_usuario(user)
         return resumen
 
     except Exception as e:
         return f"No se pudo generar memoria inteligente: {e}"
 
+# FIX: función de audio unificada que retorna bytes directamente
+def generar_audio_bytes(texto):
+    audio_path = f"respuesta_av_mentorai_{uuid.uuid4().hex}.mp3"
+    with client.audio.speech.with_streaming_response.create(
+        model="tts-1",
+        voice="alloy",
+        input=texto[:1200]
+    ) as response:
+        response.stream_to_file(audio_path)
+    with open(audio_path, "rb") as f:
+        audio_bytes = f.read()
+    try:
+        os.remove(audio_path)
+    except Exception:
+        pass
+    return audio_bytes
+
+# FIX: función para mostrar el player de audio correctamente
 def render_audio_player(texto):
     try:
-        audio_path = generar_voz(texto)
-
-        with open(audio_path, "rb") as audio_file:
-            audio_bytes = audio_file.read()
-
+        audio_bytes = generar_audio_bytes(texto)
         st.audio(audio_bytes, format="audio/mpeg")
-
         st.download_button(
             "⬇️ Descargar audio",
             data=audio_bytes,
             file_name="respuesta_av_mentorai.mp3",
             mime="audio/mpeg"
         )
-
     except Exception as e:
         st.warning(f"No se pudo generar el audio: {e}")
 
-        # =========================================
+# FIX: helper para plural correcto de "día/días"
+def plural_dias(n):
+    return f"{n} día" if n == 1 else f"{n} días"
+
+# =========================================
 # LOGIN / LANDING
 # =========================================
 
@@ -664,49 +687,35 @@ if not user.get("onboarding_completo", False):
         placeholder="Ej: tienda de ropa, supermercado, ecommerce, todavía no tengo..."
     )
 
+    tipos = [
+        "Todavía no tengo negocio",
+        "Supermercado / mayorista",
+        "E-commerce",
+        "Reventa",
+        "Restaurante / comida",
+        "Servicios",
+        "Inmobiliaria",
+        "Otro"
+    ]
+
     user["tipo_negocio"] = st.selectbox(
         "Tipo de negocio o interés:",
-        [
-            "Todavía no tengo negocio",
-            "Supermercado / mayorista",
-            "E-commerce",
-            "Reventa",
-            "Restaurante / comida",
-            "Servicios",
-            "Inmobiliaria",
-            "Otro"
-        ],
-        index=[
-            "Todavía no tengo negocio",
-            "Supermercado / mayorista",
-            "E-commerce",
-            "Reventa",
-            "Restaurante / comida",
-            "Servicios",
-            "Inmobiliaria",
-            "Otro"
-        ].index(user["tipo_negocio"]) if user["tipo_negocio"] in [
-            "Todavía no tengo negocio",
-            "Supermercado / mayorista",
-            "E-commerce",
-            "Reventa",
-            "Restaurante / comida",
-            "Servicios",
-            "Inmobiliaria",
-            "Otro"
-        ] else 0
+        tipos,
+        index=tipos.index(user["tipo_negocio"]) if user["tipo_negocio"] in tipos else 0
     )
 
     user["nivel_usuario"] = st.selectbox(
         "Tu nivel actual:",
         ["Principiante", "Intermedio", "Avanzado"],
         index=["Principiante", "Intermedio", "Avanzado"].index(user["nivel_usuario"])
+        if user["nivel_usuario"] in ["Principiante", "Intermedio", "Avanzado"] else 0
     )
 
+    tiempos = ["15 minutos", "30 minutos", "1 hora", "Más de 1 hora"]
     user["tiempo_diario"] = st.selectbox(
         "¿Cuánto tiempo podés dedicar por día?",
-        ["15 minutos", "30 minutos", "1 hora", "Más de 1 hora"],
-        index=["15 minutos", "30 minutos", "1 hora", "Más de 1 hora"].index(user["tiempo_diario"]) if user["tiempo_diario"] in ["15 minutos", "30 minutos", "1 hora", "Más de 1 hora"] else 0
+        tiempos,
+        index=tiempos.index(user["tiempo_diario"]) if user["tiempo_diario"] in tiempos else 0
     )
 
     user["principal_dificultad"] = st.text_area(
@@ -809,10 +818,23 @@ with st.sidebar:
         guardar_usuario(user)
         st.success("Datos guardados.")
 
+    # FIX: confirmación antes de borrar conversación
     if st.button("🧹 Borrar conversación"):
-        user["messages"] = []
-        guardar_usuario(user)
-        st.rerun()
+        st.session_state.confirmar_borrar = True
+
+    if st.session_state.get("confirmar_borrar", False):
+        st.warning("¿Estás seguro? Esto borra todo el historial.")
+        col_si, col_no = st.columns(2)
+        with col_si:
+            if st.button("✅ Sí, borrar"):
+                user["messages"] = []
+                guardar_usuario(user)
+                st.session_state.confirmar_borrar = False
+                st.rerun()
+        with col_no:
+            if st.button("❌ Cancelar"):
+                st.session_state.confirmar_borrar = False
+                st.rerun()
 
     if st.button("🔁 Rehacer onboarding"):
         user["onboarding_completo"] = False
@@ -831,6 +853,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# FIX: 5 columnas con plural correcto en "día/días"
 m1, m2, m3, m4, m5 = st.columns(5)
 
 with m1:
@@ -853,7 +876,7 @@ with m3:
     st.markdown(f"""
     <div class="metric-card">
     <h3>🔥 Racha</h3>
-    <h2>{user["racha"]} días</h2>
+    <h2>{plural_dias(user["racha"])}</h2>
     </div>
     """, unsafe_allow_html=True)
 
@@ -897,36 +920,31 @@ with tab_mentor:
 
     st.markdown("## 🧠 Chat principal")
 
-    c1, c2, c3, c4, c5, c6 = st.columns(6)
+    # FIX: 3 columnas en lugar de 6 para que quede bien en mobile
+    c1, c2, c3 = st.columns(3)
     quick_prompt = None
 
     with c1:
         if st.button("💡 Idea"):
             quick_prompt = "Dame una idea de negocio rentable para empezar con pocos recursos."
+        if st.button("🎭 Cliente difícil"):
+            quick_prompt = "Hagamos una simulación. Vos sos un cliente difícil y yo tengo que venderte."
 
     with c2:
         if st.button("📈 Vender"):
             quick_prompt = "Quiero vender más. Dame un plan práctico."
+        if st.button("🔥 Desafío"):
+            quick_prompt = f"Quiero hacer este desafío diario: {desafio}. Guiame paso a paso."
 
     with c3:
         if st.button("📱 Marketing"):
             quick_prompt = "Quiero aprender marketing desde cero para vender por redes sociales."
-
-    with c4:
-        if st.button("🎭 Cliente difícil"):
-            quick_prompt = "Hagamos una simulación. Vos sos un cliente difícil y yo tengo que venderte."
-
-    with c5:
-        if st.button("🔥 Desafío"):
-            quick_prompt = f"Quiero hacer este desafío diario: {desafio}. Guiame paso a paso."
-
-    with c6:
         if st.button("💎 Mentor fuerte"):
             quick_prompt = "Háblame como mentor exigente y dime qué debería mejorar hoy."
 
     st.write("")
 
-    audio = st.audio_input("🎤 Grabá tu pregunta por voz")
+    audio = st.audio_input("🎤 Grabá tu pregunta por voz (opcional)")
     voice_prompt = None
 
     if audio:
@@ -943,19 +961,22 @@ with tab_mentor:
     for msg in user["messages"]:
         render_chat_message(msg["role"], msg["content"])
 
+    # FIX: botón de audio ÚNICO y correcto, solo aparece si hay respuesta
     ultima_respuesta_audio = obtener_ultima_respuesta(user)
 
     if ultima_respuesta_audio:
-        if st.button("🔊 Escuchar última respuesta"):
-            render_audio_player(ultima_respuesta_audio)
+        if st.button("🔊 Escuchar última respuesta", key="audio_unico"):
+            with st.spinner("Generando audio..."):
+                render_audio_player(ultima_respuesta_audio)
 
+    # Input de texto del chat
     user_input = st.chat_input("Escribí tu pregunta...")
 
-    if quick_prompt:
-        user_input = quick_prompt
-
+    # FIX: prioridad correcta: voz > quick_prompt > texto
     if voice_prompt:
         user_input = voice_prompt
+    elif quick_prompt:
+        user_input = quick_prompt
 
     if user_input:
 
@@ -969,7 +990,7 @@ with tab_mentor:
 
         if not MODO_DEV:
             if user["plan"] == "Gratis" and user["preguntas_hoy"] >= 10:
-                st.warning("Llegaste al límite diario del plan Gratis. Activá Premium demo para seguir.")
+                st.warning("Llegaste al límite diario del plan Gratis. Activá Premium para seguir.")
                 st.stop()
 
         user["preguntas_hoy"] += 1
@@ -979,14 +1000,17 @@ with tab_mentor:
             "content": user_input
         })
 
+        # FIX: limitar memoria_larga al guardar mensajes del usuario
         user["memoria_larga"].append(f"El usuario dijo: {user_input}")
+        if len(user["memoria_larga"]) > 20:
+            user["memoria_larga"] = user["memoria_larga"][-20:]
 
         sumar_xp(10)
 
         with st.spinner("AV MentorAI está pensando..."):
             try:
                 response = client.chat.completions.create(
-                    model="gpt-4.1-mini",
+                    model="gpt-4o-mini",
                     messages=[
                         {
                             "role": "system",
@@ -1004,7 +1028,7 @@ with tab_mentor:
                 respuesta = response.choices[0].message.content
 
             except Exception as e:
-                respuesta = f"Hubo un problema de conexión con OpenAI: {e}"
+                respuesta = f"Hubo un problema de conexión: {e}"
 
         user["messages"].append({
             "role": "assistant",
@@ -1013,20 +1037,12 @@ with tab_mentor:
 
         guardar_usuario(user)
 
+        render_chat_message("user", user_input)
         render_chat_message("assistant", respuesta)
 
-        st.info("Respuesta guardada. Tocá “🔊 Escuchar última respuesta” para generar audio.")
-if st.button("🔊 Escuchar última respuesta", key="audio_btn"):
-    try:
-        audio_path = generar_audio_openai(respuesta)
+        st.info("✅ Respuesta guardada. Tocá '🔊 Escuchar última respuesta' para generar audio.")
+        st.rerun()
 
-        with open(audio_path, "rb") as audio_file:
-            audio_bytes = audio_file.read()
-
-        st.audio(audio_bytes, format="audio/mp3")
-
-    except Exception as e:
-        st.error(f"Error audio: {e}")
 # =========================================
 # TAB PROGRESO
 # =========================================
@@ -1049,7 +1065,7 @@ with tab_progreso:
         st.markdown(f"""
         <div class="metric-card">
         <h3>🔥 Racha</h3>
-        <h2>{user["racha"]} días</h2>
+        <h2>{plural_dias(user["racha"])}</h2>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1065,10 +1081,11 @@ with tab_progreso:
         df_xp = pd.DataFrame(user["xp_history"])
         st.line_chart(df_xp.set_index("fecha")["xp"])
     else:
-        st.info("Todavía no hay progreso suficiente.")
+        st.info("Todavía no hay progreso suficiente para mostrar el gráfico.")
 
     if st.button("🧠 Generar memoria inteligente"):
-        resumen = generar_resumen_inteligente(user)
+        with st.spinner("Generando resumen..."):
+            resumen = generar_resumen_inteligente(user)
         st.success(resumen)
 
     if user["logros"]:
@@ -1130,7 +1147,7 @@ with tab_desafios:
     <div class="card">
         <p><b>Desafíos completados:</b> {user["desafios_completados"]}</p>
         <p><b>Objetivos completados:</b> {user["objetivos_completados"]}</p>
-        <p><b>Racha actual:</b> {user["racha"]} días</p>
+        <p><b>Racha actual:</b> {plural_dias(user["racha"])}</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1191,7 +1208,7 @@ with tab_premium:
         </div>
         """, unsafe_allow_html=True)
 
-        st.info("Más adelante se puede conectar con Mercado Pago o Stripe.")
+        st.info("Próximamente: conexión con Mercado Pago o Stripe.")
 
     st.markdown("### Estado de tu plan")
 
@@ -1237,7 +1254,7 @@ with tab_ranking:
 
     if ranking:
         df_ranking = pd.DataFrame(ranking)
-        st.dataframe(df_ranking, width="stretch")
+        st.dataframe(df_ranking, use_container_width=True)
     else:
         st.info("Todavía no hay usuarios en el ranking.")
 
@@ -1278,4 +1295,4 @@ with tab_feedback:
         st.markdown("### Feedback guardado")
 
         df_feedback = pd.DataFrame(user["feedback"])
-        st.dataframe(df_feedback, width="stretch")
+        st.dataframe(df_feedback, use_container_width=True)
