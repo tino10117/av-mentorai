@@ -1016,7 +1016,7 @@ with tab_mentor:
         render_chat_message("assistant", respuesta)
 
         st.info("Respuesta guardada. Tocá “🔊 Escuchar última respuesta” para generar audio.")
-if st.button("🔊 Escuchar última respuesta"):
+if st.button("🔊 Escuchar última respuesta", key="audio_btn"):
     try:
         audio_path = generar_audio_openai(respuesta)
 
