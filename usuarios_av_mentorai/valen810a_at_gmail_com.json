@@ -1,0 +1,92 @@
+{
+    "nombre": "valentino",
+    "email": "valen810a@gmail.com",
+    "password": "52efcc8f372f4ec3810975f621cb7b6b9938a630b4b9eb1943a4d070537979d9",
+    "plan": "Premium",
+    "xp": 120,
+    "racha": 1,
+    "messages": [],
+    "objetivo": "\n\n",
+    "negocio": "",
+    "meta_mensual": "",
+    "ingresos_objetivo": 0,
+    "habito_clave": "",
+    "desafios_completados": 0,
+    "objetivos_completados": 0,
+    "logros": [
+        "Primeros 100 XP"
+    ],
+    "xp_history": [
+        {
+            "fecha": "2026-05-06",
+            "xp": 10
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 20
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 30
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 40
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 50
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 60
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 70
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 80
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 90
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 100
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 110
+        },
+        {
+            "fecha": "2026-05-06",
+            "xp": 120
+        }
+    ],
+    "ultima_fecha": "2026-05-06",
+    "fecha_desafio": "2026-05-06",
+    "desafio_actual": "Pensá una estrategia para vender más.",
+    "preguntas_hoy": 12,
+    "fecha_preguntas": "2026-05-06",
+    "password_hash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "memoria_larga": [
+        "El usuario dijo: ¿Mentor?",
+        "El usuario dijo: ¿Qué sabes sobre las mejores comidas de Argentina?",
+        "El usuario dijo: ...más sobre mi empresa...",
+        "El usuario dijo: Bueno te cuento lo de la empresa Santa Rita de mi papá, nosotros tenemos aproximadamente 20 camiones, 3 mayoristas minoristas y dos supermercados y también tenemos campos feedlot",
+        "El usuario dijo: Vamos con eso",
+        "El usuario dijo: dime si mi empresa te parece grande",
+        "El usuario dijo: tambien tenemos electrodomesticos y ferreteria",
+        "El usuario dijo: ¿Qué opinan sobre las exportaciones actualmente de China a Argentina?",
+        "El usuario dijo: No, esto ya no tiene nada que ver con mi empresa, esto es lo que mi hermano está por empezar a hacer, por lo bajo que esta el precio allá y lo vendes a más acá "
+    ],
+    "onboarding_completo": true,
+    "tipo_negocio": "Supermercado / mayorista",
+    "nivel_usuario": "Principiante",
+    "tiempo_diario": "15 minutos",
+    "principal_dificultad": "",
+    "feedback": []
+}
