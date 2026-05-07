@@ -2291,7 +2291,7 @@ Generá contenido que realmente venda, no genérico."""
             st.markdown("### 📋 Plantillas descargables")
             st.caption("Copiá y usá estas plantillas hoy mismo. Están listas para adaptar a tu negocio.")
 
-            plant_sel = st.selectbox("Elegí una plantilla:", list(PLANTILLAS.keys()), key="plant_sel")
+            plant_sel = st.selectbox("Elegí una plantilla:", list(PLANTILLAS.keys()), key="pl_sel")
 
             if plant_sel:
                 contenido_planta = PLANTILLAS[plant_sel]
@@ -2302,14 +2302,14 @@ Generá contenido que realmente venda, no genérico."""
                     data=contenido_planta,
                     file_name=f"plantilla_{plant_sel.split(' ',1)[1].lower().replace(' ','_')}.txt",
                     mime="text/plain",
-                    key="dl_plantilla"
+                    key="pl_dl"
                 )
 
             st.divider()
             st.markdown("### ✍️ Personalizar plantilla con IA")
             st.caption("Describí tu negocio y la IA adapta la plantilla para vos.")
-            mi_negocio_p = st.text_area("Describí tu negocio brevemente:", placeholder="Ej: vendo ropa de mujer por Instagram, tengo 2 años, mis clientes son mujeres de 25-40 años", height=80, key="mi_neg_plantilla")
-            if st.button("🪄 Personalizar con IA", key="btn_personalizar") and mi_negocio_p.strip():
+            mi_negocio_p = st.text_area("Describí tu negocio brevemente:", placeholder="Ej: vendo ropa de mujer por Instagram, tengo 2 años, mis clientes son mujeres de 25-40 años", height=80, key="pl_neg")
+            if st.button("🪄 Personalizar con IA", key="pl_btn") and mi_negocio_p.strip():
                 prompt_p = f"Adaptá esta plantilla para el negocio: {mi_negocio_p}. Plantilla original: {PLANTILLAS[plant_sel]}. Adaptá todos los campos con información realista. Sé concreto."
                 user_h = st.session_state.user_data
                 with st.spinner("Personalizando..."):
@@ -2329,19 +2329,19 @@ Generá contenido que realmente venda, no genérico."""
                 st.markdown(f"""<div style="background:rgba(15,23,42,.95);border:1px solid rgba(34,197,94,.3);border-radius:16px;padding:20px;white-space:pre-wrap;font-size:13px;color:#f1f5f9;line-height:1.6">{st.session_state.plantilla_personalizada}</div>""", unsafe_allow_html=True)
                 st.code(st.session_state.plantilla_personalizada, language=None)
                 st.download_button("⬇️ Descargar personalizada", data=st.session_state.plantilla_personalizada,
-                    file_name="plantilla_personalizada.txt", mime="text/plain", key="dl_pers")
+                    file_name="plantilla_personalizada.txt", mime="text/plain", key="pl_dl_pers")
 
     # ── MARCA PERSONAL ──
     if herr_sel == "Marca personal":
             st.markdown("### 🎨 Creador de marca personal")
             st.caption("La IA te ayuda a crear tu identidad: nombre, bio, colores y estilo para Instagram.")
 
-            marca_rubro = st.text_input("¿Qué vendés o a qué te dedicás?", placeholder="Ej: vendo ropa de mujer, soy fotógrafo, hago tortas personalizadas", key="marca_rubro")
-            marca_publico = st.text_input("¿A quién le vendés?", placeholder="Ej: mujeres jóvenes, empresas pequeñas, mamás", key="marca_publico")
-            marca_estilo = st.selectbox("Estilo de tu marca:", ["Moderno y minimalista", "Divertido y colorido", "Elegante y premium", "Cercano y familiar", "Joven y urbano"], key="marca_estilo")
-            marca_ciudad = st.text_input("¿De dónde sos?", placeholder="Ej: Buenos Aires, Córdoba, Mendoza", key="marca_ciudad")
+            marca_rubro = st.text_input("¿Qué vendés o a qué te dedicás?", placeholder="Ej: vendo ropa de mujer, soy fotógrafo, hago tortas personalizadas", key="mp_rubro")
+            marca_publico = st.text_input("¿A quién le vendés?", placeholder="Ej: mujeres jóvenes, empresas pequeñas, mamás", key="mp_publico")
+            marca_estilo = st.selectbox("Estilo de tu marca:", ["Moderno y minimalista", "Divertido y colorido", "Elegante y premium", "Cercano y familiar", "Joven y urbano"], key="mp_estilo")
+            marca_ciudad = st.text_input("¿De dónde sos?", placeholder="Ej: Buenos Aires, Córdoba, Mendoza", key="mp_ciudad")
 
-            if st.button("🎨 Crear mi marca", key="btn_marca") and marca_rubro.strip():
+            if st.button("🎨 Crear mi marca", key="mp_btn") and marca_rubro.strip():
                 prompt_m = f"""Creá una identidad de marca completa para este emprendedor:
 
 Rubro: {marca_rubro}
@@ -2380,8 +2380,8 @@ Sé específico y creativo. Pensá en marcas que la gente quiera seguir."""
                 st.markdown("### ✨ Tu marca personal")
                 st.markdown(f'<div class="card" style="border-color:rgba(168,85,247,.4);white-space:pre-wrap;line-height:1.7">{st.session_state.mi_marca}</div>', unsafe_allow_html=True)
                 st.download_button("⬇️ Descargar mi marca", data=st.session_state.mi_marca,
-                    file_name="mi_marca_personal.txt", mime="text/plain", key="dl_marca")
-                if st.button("🔄 Generar otra versión", key="btn_marca2"):
+                    file_name="mi_marca_personal.txt", mime="text/plain", key="mp_dl")
+                if st.button("🔄 Generar otra versión", key="mp_btn2"):
                     st.session_state.mi_marca = None
                     st.rerun()
 
@@ -2395,23 +2395,23 @@ Sé específico y creativo. Pensá en marcas que la gente quiera seguir."""
                 "🤔 Simulador de decisiones",
                 "💸 Calculadora de ahorro",
                 "📈 ¿Cuánto necesito ganar?"
-            ], key="fin_tabs", label_visibility="collapsed")
+            ], key="fin_tabs_main", label_visibility="collapsed")
 
             if fin_tabs == "📊 Armar mi presupuesto":
                 st.markdown("**Ingresá tus ingresos y gastos mensuales:**")
-                fin_ingreso = st.number_input("💵 Ingreso mensual ($):", min_value=0, step=1000, key="fin_ing")
+                fin_ingreso = st.number_input("💵 Ingreso mensual ($):", min_value=0, step=1000, key="fp_ing")
                 st.markdown("**Gastos fijos:**")
                 f1,f2 = st.columns(2)
                 with f1:
-                    fin_alquiler = st.number_input("🏠 Alquiler/cuota:", min_value=0, step=1000, key="fin_alq")
-                    fin_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="fin_com")
-                    fin_transporte = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="fin_trans")
+                    fin_alquiler = st.number_input("🏠 Alquiler/cuota:", min_value=0, step=1000, key="fp_alq")
+                    fin_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="fp_com")
+                    fin_transporte = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="fp_trans")
                 with f2:
-                    fin_servicios = st.number_input("💡 Servicios:", min_value=0, step=1000, key="fin_serv")
-                    fin_entretenimiento = st.number_input("🎬 Entretenimiento:", min_value=0, step=1000, key="fin_ent")
-                    fin_otros = st.number_input("📦 Otros gastos:", min_value=0, step=1000, key="fin_otros")
+                    fin_servicios = st.number_input("💡 Servicios:", min_value=0, step=1000, key="fp_serv")
+                    fin_entretenimiento = st.number_input("🎬 Entretenimiento:", min_value=0, step=1000, key="fp_ent")
+                    fin_otros = st.number_input("📦 Otros gastos:", min_value=0, step=1000, key="fp_otros")
 
-                if st.button("📊 Analizar mis finanzas", key="btn_presupuesto"):
+                if st.button("📊 Analizar mis finanzas", key="fp_btn_pres"):
                     total_gastos = fin_alquiler+fin_comida+fin_transporte+fin_servicios+fin_entretenimiento+fin_otros
                     saldo = fin_ingreso - total_gastos
                     pct_ahorro = (saldo/fin_ingreso*100) if fin_ingreso > 0 else 0
@@ -2451,9 +2451,9 @@ Dame: 1) Diagnóstico en 2 líneas 2) 3 gastos donde puede recortar 3) Cómo lle
                 st.markdown("**Describí tu dilema financiero:**")
                 dilema = st.text_area("¿Qué decisión tenés que tomar?",
                     placeholder="Ej: ¿Me conviene comprar un auto de $500.000 en cuotas o invertir esa plata en mi negocio? | ¿Pago el curso de $30.000 o ahorro ese dinero?",
-                    height=100, key="dilema")
-                contexto_fin = st.text_input("Tu situación económica actual (opcional):", placeholder="Ej: gano $150.000 por mes, tengo $80.000 ahorrados", key="ctx_fin")
-                if st.button("🤔 Analizar decisión", key="btn_dilema") and dilema.strip():
+                    height=100, key="fp_dilema")
+                contexto_fin = st.text_input("Tu situación económica actual (opcional):", placeholder="Ej: gano $150.000 por mes, tengo $80.000 ahorrados", key="fp_ctx")
+                if st.button("🤔 Analizar decisión", key="fp_btn_dil") and dilema.strip():
                     prompt_d = f"""Analizá esta decisión financiera y dame una recomendación clara:
 
 Dilema: {dilema}
@@ -2481,10 +2481,10 @@ Sé directo y práctico, no vago."""
 
             elif fin_tabs == "💸 Calculadora de ahorro":
                 st.markdown("**¿Para qué querés ahorrar?**")
-                meta_nombre = st.text_input("Meta de ahorro:", placeholder="Ej: viaje, auto, negocio propio, fondo de emergencia", key="meta_nom")
-                meta_monto = st.number_input("¿Cuánto necesitás? ($):", min_value=0, step=1000, key="meta_mont")
-                ahorro_mensual = st.number_input("¿Cuánto podés ahorrar por mes? ($):", min_value=0, step=1000, key="ahorro_mens")
-                if st.button("💸 Calcular", key="btn_ahorro") and meta_monto > 0 and ahorro_mensual > 0:
+                meta_nombre = st.text_input("Meta de ahorro:", placeholder="Ej: viaje, auto, negocio propio, fondo de emergencia", key="fp_meta_nom")
+                meta_monto = st.number_input("¿Cuánto necesitás? ($):", min_value=0, step=1000, key="fp_meta_mont")
+                ahorro_mensual = st.number_input("¿Cuánto podés ahorrar por mes? ($):", min_value=0, step=1000, key="fp_aho_mens")
+                if st.button("💸 Calcular", key="fp_btn_aho") and meta_monto > 0 and ahorro_mensual > 0:
                     meses = meta_monto / ahorro_mensual
                     años = meses / 12
                     st.success(f"Para ahorrar ${meta_monto:,.0f} ahorrando ${ahorro_mensual:,.0f}/mes necesitás **{meses:.0f} meses** ({años:.1f} años).")
@@ -2498,14 +2498,14 @@ Sé directo y práctico, no vago."""
                 st.markdown("**Calculá cuánto necesitás ganar para vivir como querés:**")
                 g1, g2 = st.columns(2)
                 with g1:
-                    g_alquiler = st.number_input("🏠 Alquiler deseado:", min_value=0, step=1000, key="g_alq")
-                    g_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="g_com")
-                    g_trans = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="g_trans")
+                    g_alquiler = st.number_input("🏠 Alquiler deseado:", min_value=0, step=1000, key="fp_g_alq")
+                    g_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="fp_g_com")
+                    g_trans = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="fp_g_trans")
                 with g2:
-                    g_serv = st.number_input("💡 Servicios:", min_value=0, step=1000, key="g_serv")
-                    g_ocio = st.number_input("🎬 Ocio y entretenimiento:", min_value=0, step=1000, key="g_ocio")
-                    g_ahorro = st.number_input("💰 Ahorro mensual deseado:", min_value=0, step=1000, key="g_aho")
-                if st.button("📈 Calcular", key="btn_ganar"):
+                    g_serv = st.number_input("💡 Servicios:", min_value=0, step=1000, key="fp_g_serv")
+                    g_ocio = st.number_input("🎬 Ocio y entretenimiento:", min_value=0, step=1000, key="fp_g_ocio")
+                    g_ahorro = st.number_input("💰 Ahorro mensual deseado:", min_value=0, step=1000, key="fp_g_aho")
+                if st.button("📈 Calcular", key="fp_btn_gan"):
                     total_necesario = g_alquiler+g_comida+g_trans+g_serv+g_ocio+g_ahorro
                     con_imputados = total_necesario * 1.3  # 30% para impuestos/imprevistos
                     st.success(f"**Necesitás ganar al menos ${total_necesario:,.0f}/mes**")
@@ -2529,12 +2529,12 @@ Sé directo y práctico, no vago."""
             st.markdown("### 🎨 Creador de marca personal")
             st.caption("La IA te ayuda a crear tu identidad: nombre, bio, colores y estilo para Instagram.")
 
-            marca_rubro = st.text_input("¿Qué vendés o a qué te dedicás?", placeholder="Ej: vendo ropa de mujer, soy fotógrafo, hago tortas personalizadas", key="marca_rubro")
-            marca_publico = st.text_input("¿A quién le vendés?", placeholder="Ej: mujeres jóvenes, empresas pequeñas, mamás", key="marca_publico")
-            marca_estilo = st.selectbox("Estilo de tu marca:", ["Moderno y minimalista", "Divertido y colorido", "Elegante y premium", "Cercano y familiar", "Joven y urbano"], key="marca_estilo")
-            marca_ciudad = st.text_input("¿De dónde sos?", placeholder="Ej: Buenos Aires, Córdoba, Mendoza", key="marca_ciudad")
+            marca_rubro = st.text_input("¿Qué vendés o a qué te dedicás?", placeholder="Ej: vendo ropa de mujer, soy fotógrafo, hago tortas personalizadas", key="mp_rubro")
+            marca_publico = st.text_input("¿A quién le vendés?", placeholder="Ej: mujeres jóvenes, empresas pequeñas, mamás", key="mp_publico")
+            marca_estilo = st.selectbox("Estilo de tu marca:", ["Moderno y minimalista", "Divertido y colorido", "Elegante y premium", "Cercano y familiar", "Joven y urbano"], key="mp_estilo")
+            marca_ciudad = st.text_input("¿De dónde sos?", placeholder="Ej: Buenos Aires, Córdoba, Mendoza", key="mp_ciudad")
 
-            if st.button("🎨 Crear mi marca", key="btn_marca") and marca_rubro.strip():
+            if st.button("🎨 Crear mi marca", key="mp_btn") and marca_rubro.strip():
                 prompt_m = f"""Creá una identidad de marca completa para este emprendedor:
 
 Rubro: {marca_rubro}
@@ -2573,8 +2573,8 @@ Sé específico y creativo. Pensá en marcas que la gente quiera seguir."""
                 st.markdown("### ✨ Tu marca personal")
                 st.markdown(f'<div class="card" style="border-color:rgba(168,85,247,.4);white-space:pre-wrap;line-height:1.7">{st.session_state.mi_marca}</div>', unsafe_allow_html=True)
                 st.download_button("⬇️ Descargar mi marca", data=st.session_state.mi_marca,
-                    file_name="mi_marca_personal.txt", mime="text/plain", key="dl_marca")
-                if st.button("🔄 Generar otra versión", key="btn_marca2"):
+                    file_name="mi_marca_personal.txt", mime="text/plain", key="mp_dl")
+                if st.button("🔄 Generar otra versión", key="mp_btn2"):
                     st.session_state.mi_marca = None
                     st.rerun()
 
@@ -2588,23 +2588,23 @@ Sé específico y creativo. Pensá en marcas que la gente quiera seguir."""
                 "🤔 Simulador de decisiones",
                 "💸 Calculadora de ahorro",
                 "📈 ¿Cuánto necesito ganar?"
-            ], key="fin_tabs", label_visibility="collapsed")
+            ], key="fin_tabs_main", label_visibility="collapsed")
 
             if fin_tabs == "📊 Armar mi presupuesto":
                 st.markdown("**Ingresá tus ingresos y gastos mensuales:**")
-                fin_ingreso = st.number_input("💵 Ingreso mensual ($):", min_value=0, step=1000, key="fin_ing")
+                fin_ingreso = st.number_input("💵 Ingreso mensual ($):", min_value=0, step=1000, key="fp_ing")
                 st.markdown("**Gastos fijos:**")
                 f1,f2 = st.columns(2)
                 with f1:
-                    fin_alquiler = st.number_input("🏠 Alquiler/cuota:", min_value=0, step=1000, key="fin_alq")
-                    fin_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="fin_com")
-                    fin_transporte = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="fin_trans")
+                    fin_alquiler = st.number_input("🏠 Alquiler/cuota:", min_value=0, step=1000, key="fp_alq")
+                    fin_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="fp_com")
+                    fin_transporte = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="fp_trans")
                 with f2:
-                    fin_servicios = st.number_input("💡 Servicios:", min_value=0, step=1000, key="fin_serv")
-                    fin_entretenimiento = st.number_input("🎬 Entretenimiento:", min_value=0, step=1000, key="fin_ent")
-                    fin_otros = st.number_input("📦 Otros gastos:", min_value=0, step=1000, key="fin_otros")
+                    fin_servicios = st.number_input("💡 Servicios:", min_value=0, step=1000, key="fp_serv")
+                    fin_entretenimiento = st.number_input("🎬 Entretenimiento:", min_value=0, step=1000, key="fp_ent")
+                    fin_otros = st.number_input("📦 Otros gastos:", min_value=0, step=1000, key="fp_otros")
 
-                if st.button("📊 Analizar mis finanzas", key="btn_presupuesto"):
+                if st.button("📊 Analizar mis finanzas", key="fp_btn_pres"):
                     total_gastos = fin_alquiler+fin_comida+fin_transporte+fin_servicios+fin_entretenimiento+fin_otros
                     saldo = fin_ingreso - total_gastos
                     pct_ahorro = (saldo/fin_ingreso*100) if fin_ingreso > 0 else 0
@@ -2644,9 +2644,9 @@ Dame: 1) Diagnóstico en 2 líneas 2) 3 gastos donde puede recortar 3) Cómo lle
                 st.markdown("**Describí tu dilema financiero:**")
                 dilema = st.text_area("¿Qué decisión tenés que tomar?",
                     placeholder="Ej: ¿Me conviene comprar un auto de $500.000 en cuotas o invertir esa plata en mi negocio? | ¿Pago el curso de $30.000 o ahorro ese dinero?",
-                    height=100, key="dilema")
-                contexto_fin = st.text_input("Tu situación económica actual (opcional):", placeholder="Ej: gano $150.000 por mes, tengo $80.000 ahorrados", key="ctx_fin")
-                if st.button("🤔 Analizar decisión", key="btn_dilema") and dilema.strip():
+                    height=100, key="fp_dilema")
+                contexto_fin = st.text_input("Tu situación económica actual (opcional):", placeholder="Ej: gano $150.000 por mes, tengo $80.000 ahorrados", key="fp_ctx")
+                if st.button("🤔 Analizar decisión", key="fp_btn_dil") and dilema.strip():
                     prompt_d = f"""Analizá esta decisión financiera y dame una recomendación clara:
 
 Dilema: {dilema}
@@ -2674,10 +2674,10 @@ Sé directo y práctico, no vago."""
 
             elif fin_tabs == "💸 Calculadora de ahorro":
                 st.markdown("**¿Para qué querés ahorrar?**")
-                meta_nombre = st.text_input("Meta de ahorro:", placeholder="Ej: viaje, auto, negocio propio, fondo de emergencia", key="meta_nom")
-                meta_monto = st.number_input("¿Cuánto necesitás? ($):", min_value=0, step=1000, key="meta_mont")
-                ahorro_mensual = st.number_input("¿Cuánto podés ahorrar por mes? ($):", min_value=0, step=1000, key="ahorro_mens")
-                if st.button("💸 Calcular", key="btn_ahorro") and meta_monto > 0 and ahorro_mensual > 0:
+                meta_nombre = st.text_input("Meta de ahorro:", placeholder="Ej: viaje, auto, negocio propio, fondo de emergencia", key="fp_meta_nom")
+                meta_monto = st.number_input("¿Cuánto necesitás? ($):", min_value=0, step=1000, key="fp_meta_mont")
+                ahorro_mensual = st.number_input("¿Cuánto podés ahorrar por mes? ($):", min_value=0, step=1000, key="fp_aho_mens")
+                if st.button("💸 Calcular", key="fp_btn_aho") and meta_monto > 0 and ahorro_mensual > 0:
                     meses = meta_monto / ahorro_mensual
                     años = meses / 12
                     st.success(f"Para ahorrar ${meta_monto:,.0f} ahorrando ${ahorro_mensual:,.0f}/mes necesitás **{meses:.0f} meses** ({años:.1f} años).")
@@ -2691,14 +2691,14 @@ Sé directo y práctico, no vago."""
                 st.markdown("**Calculá cuánto necesitás ganar para vivir como querés:**")
                 g1, g2 = st.columns(2)
                 with g1:
-                    g_alquiler = st.number_input("🏠 Alquiler deseado:", min_value=0, step=1000, key="g_alq")
-                    g_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="g_com")
-                    g_trans = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="g_trans")
+                    g_alquiler = st.number_input("🏠 Alquiler deseado:", min_value=0, step=1000, key="fp_g_alq")
+                    g_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="fp_g_com")
+                    g_trans = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="fp_g_trans")
                 with g2:
-                    g_serv = st.number_input("💡 Servicios:", min_value=0, step=1000, key="g_serv")
-                    g_ocio = st.number_input("🎬 Ocio y entretenimiento:", min_value=0, step=1000, key="g_ocio")
-                    g_ahorro = st.number_input("💰 Ahorro mensual deseado:", min_value=0, step=1000, key="g_aho")
-                if st.button("📈 Calcular", key="btn_ganar"):
+                    g_serv = st.number_input("💡 Servicios:", min_value=0, step=1000, key="fp_g_serv")
+                    g_ocio = st.number_input("🎬 Ocio y entretenimiento:", min_value=0, step=1000, key="fp_g_ocio")
+                    g_ahorro = st.number_input("💰 Ahorro mensual deseado:", min_value=0, step=1000, key="fp_g_aho")
+                if st.button("📈 Calcular", key="fp_btn_gan"):
                     total_necesario = g_alquiler+g_comida+g_trans+g_serv+g_ocio+g_ahorro
                     con_imputados = total_necesario * 1.3  # 30% para impuestos/imprevistos
                     st.success(f"**Necesitás ganar al menos ${total_necesario:,.0f}/mes**")
