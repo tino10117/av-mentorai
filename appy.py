@@ -405,7 +405,17 @@ h1,h2,h3,h4,p,label,span{color:#f8fafc!important;}
 [data-testid="stAudioInput"] button{background:#1e293b!important;}
 [data-testid="stAudioInput"] *{background:#1e293b!important;color:#f8fafc!important;}
 [data-testid="stExpander"]{background:rgba(15,23,42,.88)!important;border:1px solid rgba(250,204,21,.25)!important;border-radius:16px!important;}
-@media(max-width:768px){.av-logo{font-size:32px;}.chat-text{font-size:14px;}.block-container{padding-left:.8rem;padding-right:.8rem;}.metric-chip .metric-value{font-size:14px;}}
+@media(max-width:768px){
+    .av-logo{font-size:28px;}
+    .chat-text{font-size:13px;}
+    .block-container{padding-left:.6rem;padding-right:.6rem;padding-top:.5rem;}
+    h1{font-size:20px!important;}
+    h2{font-size:17px!important;}
+    h3{font-size:15px!important;}
+    .hero-card,.card,.plan-card,.challenge-card{padding:12px;}
+    [data-testid="stTabs"] [data-baseweb="tab"]{font-size:11px!important;padding:6px 8px!important;}
+    .stButton>button{font-size:13px!important;padding:6px 10px!important;}
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -969,8 +979,11 @@ with tab_mentor:
             except Exception as e: st.warning(f"Error: {e}")
 
     ui=st.chat_input("✍️ Escribí tu pregunta acá...")
-    if vp: ui=vp
-    elif qp: ui=qp
+    if vp:
+        ui=vp
+    elif st.session_state.get("neg_quick"):
+        ui=st.session_state.neg_quick
+        st.session_state.neg_quick=None
     if ui:
         ib64=im=na=None
         if arch:
@@ -1183,8 +1196,8 @@ with tab_english:
 
     # ── CHAT CON ALEX ──
     with sub_tabs[5]:
-        st.markdown("### 💬 Chat con Alex, tu profesor de inglés")
-        st.caption("Preguntale cualquier duda, pedile ejercicios o practicá conversación.")
+        st.markdown("<p style='font-size:16px;font-weight:800;color:#a855f7;margin:8px 0 2px'>💬 Chat con Alex</p>", unsafe_allow_html=True)
+        st.caption("Preguntale dudas, pedile ejercicios o practicá conversación.")
 
         eng_msgs=user.get("english_messages",[])
         if not eng_msgs:
@@ -1197,16 +1210,16 @@ with tab_english:
             if ul_eng and st.button("🔊 Escuchar a Alex",key="aud_eng"):
                 with st.spinner("..."): render_audio_player(ul_eng)
 
-        e1,e2,e3=st.columns(3); eq=None
+        e1,e2,e3=st.columns(3)
         with e1:
-            if st.button("🔤 Verbo To Be"): eq="Explicame el verbo To Be desde cero con ejemplos."
-            if st.button("✍️ Corregí mi inglés"): eq="Voy a escribir algo en inglés, corregime si hay errores."
+            if st.button("🔤 Verbo To Be", key="eng_b1"): st.session_state.eng_quick="Explicame el verbo To Be desde cero con ejemplos."
+            if st.button("✍️ Corregí mi inglés", key="eng_b2"): st.session_state.eng_quick="Voy a escribir algo en inglés, corregime si hay errores."
         with e2:
-            if st.button("💬 Practicar conversación"): eq="Quiero practicar una conversación en inglés. Empezá vos."
-            if st.button("📧 Emails en inglés"): eq="Enseñame a escribir un email en inglés con la estructura correcta."
+            if st.button("💬 Practicar conversación", key="eng_b3"): st.session_state.eng_quick="Quiero practicar una conversación en inglés. Empezá vos."
+            if st.button("📧 Emails en inglés", key="eng_b4"): st.session_state.eng_quick="Enseñame a escribir un email en inglés con la estructura correcta."
         with e3:
-            if st.button("🎯 Dame un ejercicio"): eq="Dame un ejercicio de inglés para mi nivel actual."
-            if st.button("🗣️ Frases cotidianas"): eq="Enseñame frases que uso todos los días en inglés."
+            if st.button("🎯 Dame un ejercicio", key="eng_b5"): st.session_state.eng_quick="Dame un ejercicio de inglés para mi nivel actual."
+            if st.button("🗣️ Frases cotidianas", key="eng_b6"): st.session_state.eng_quick="Enseñame frases que uso todos los días en inglés."
 
         audio_eng=st.audio_input("🎤 Grabá y Alex te corrige (opcional)",key="audio_alex")
         ve=None
@@ -1216,8 +1229,14 @@ with tab_english:
                 except: pass
 
         ei=st.chat_input("✍️ Escribile a Alex acá...")
-        if ve: ei=f"Grabé esto en inglés: '{ve}'. ¿Está bien dicho? Corregime si hay errores."
-        elif eq: ei=eq
+
+        # Prioridad: audio > botón rápido > texto
+        if ve:
+            ei=f"Grabé esto en inglés: '{ve}'. ¿Está bien dicho? Corregime si hay errores."
+        elif st.session_state.get("eng_quick"):
+            ei=st.session_state.eng_quick
+            st.session_state.eng_quick=None
+
         if ei: enviar_english(ei,modo="chat",lista_msgs_key="english_messages")
 
         if st.button("🗑️ Borrar chat de Alex"): user["english_messages"]=[]; guardar_usuario(user); st.rerun()
@@ -1665,7 +1684,7 @@ Frases tuyas: "Los números no mienten, y tampoco son difíciles si los entendé
 # TAB MATEMÁTICAS
 # ════════════════════════════════════════
 with tab_mate:
-    st.markdown('<div class="english-card"><h2>🔢 Aprender Matemáticas</h2><p class="small-text">Matemáticas desde cero + calculadora de negocios con Bruno, tu profesor con IA.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div style="background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(16,185,129,.10));border:1px solid rgba(34,197,94,.35);border-radius:16px;padding:12px 16px;margin-bottom:12px"><span style="font-size:20px;font-weight:800;color:#22c55e">🔢 Aprender Matemáticas</span><br><span style="font-size:12px;color:#94a3b8">Lecciones · Quiz · Calculadora de negocios · Certificado</span></div>', unsafe_allow_html=True)
 
     # Inicializar datos de mate en usuario si no existen
     if "mate_nivel" not in user: user["mate_nivel"] = "Básico"
@@ -1850,8 +1869,8 @@ with tab_mate:
 
     # ── CHAT CON BRUNO ──
     with mate_subtabs[2]:
-        st.markdown("### 💬 Chat con Bruno, tu profesor de matemáticas")
-        st.caption("Preguntale cualquier duda, pedile ejercicios o que te explique algo con ejemplos de tu negocio.")
+        st.markdown("<p style='font-size:16px;font-weight:800;color:#22c55e;margin:8px 0 2px'>💬 Chat con Bruno</p>", unsafe_allow_html=True)
+        st.caption("Preguntale dudas o pedile ejercicios con ejemplos de tu negocio.")
 
         mate_msgs = user.get("mate_messages", [])
         if not mate_msgs:
@@ -1870,19 +1889,20 @@ with tab_mate:
                 with st.spinner("..."): render_audio_player(ul_mate2)
 
         b1, b2, b3 = st.columns(3)
-        bq_mate = None
         with b1:
-            if st.button("% Porcentajes", key="bmate1"): bq_mate = "Explicame cómo calcular porcentajes con ejemplos de precios y descuentos."
-            if st.button("📊 Margen de ganancia", key="bmate2"): bq_mate = "¿Cómo calculo el margen de ganancia de un producto? Dame ejemplos."
+            if st.button("% Porcentajes", key="bmate1"): st.session_state.mate_quick="Explicame cómo calcular porcentajes con ejemplos de precios y descuentos."
+            if st.button("📊 Margen de ganancia", key="bmate2"): st.session_state.mate_quick="¿Cómo calculo el margen de ganancia de un producto? Dame ejemplos."
         with b2:
-            if st.button("⚖️ Punto de equilibrio", key="bmate3"): bq_mate = "Explicame qué es el punto de equilibrio y cómo calcularlo para mi negocio."
-            if st.button("📈 ROI", key="bmate4"): bq_mate = "¿Qué es el ROI y cómo sé si una inversión vale la pena?"
+            if st.button("⚖️ Punto de equilibrio", key="bmate3"): st.session_state.mate_quick="Explicame qué es el punto de equilibrio y cómo calcularlo para mi negocio."
+            if st.button("📈 ROI", key="bmate4"): st.session_state.mate_quick="¿Qué es el ROI y cómo sé si una inversión vale la pena?"
         with b3:
-            if st.button("🎯 Dame un ejercicio", key="bmate5"): bq_mate = "Dame un ejercicio de matemáticas de negocios para practicar."
-            if st.button("🔢 Regla de tres", key="bmate6"): bq_mate = "Explicame la regla de tres con ejemplos de ventas y productos."
+            if st.button("🎯 Dame un ejercicio", key="bmate5"): st.session_state.mate_quick="Dame un ejercicio de matemáticas de negocios para practicar."
+            if st.button("🔢 Regla de tres", key="bmate6"): st.session_state.mate_quick="Explicame la regla de tres con ejemplos de ventas y productos."
 
         mate_input = st.chat_input("✍️ Preguntale a Bruno acá...")
-        if bq_mate: mate_input = bq_mate
+        if st.session_state.get("mate_quick"):
+            mate_input = st.session_state.mate_quick
+            st.session_state.mate_quick = None
         if mate_input:
             enviar_mate(mate_input)
         if False:
