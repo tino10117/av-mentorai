@@ -1050,13 +1050,13 @@ with tab_english:
     st.markdown('<div class="english-card"><h2>📚 Aprender Inglés</h2><p class="small-text">Lecciones offline + Quiz + Roleplay + Traductor + Diario + Certificado</p></div>',unsafe_allow_html=True)
 
     # Sub-navegación
-    ing_sel = st.selectbox("Seleccioná:", 
-        ["📖 Lecciones", "🎭 Roleplay", "📖 Traductor", "📓 Diario", "🏆 Certificado", "💬 Chat con Alex"],
-        key="ing_sel", label_visibility="collapsed")
+    ing_sel = st.selectbox("Sección de inglés:", 
+        ["Lecciones", "Roleplay", "Traductor", "Diario", "Certificado", "Chat con Alex"],
+        key="ing_sel")
     st.divider()
 
     # ── LECCIONES ──
-    if ing_sel == "📖 Lecciones":
+    if ing_sel == "Lecciones":
         niv_ing=st.selectbox("Tu nivel de inglés:",["Principiante","Intermedio","Avanzado"],
             index=["Principiante","Intermedio","Avanzado"].index(user.get("english_nivel","Principiante")))
         if niv_ing!=user.get("english_nivel"): user["english_nivel"]=niv_ing; guardar_usuario(user)
@@ -1121,7 +1121,7 @@ with tab_english:
                     if st.button("❌ Cerrar lección"): st.session_state.leccion_sel=None; st.rerun()
 
     # ── ROLEPLAY ──
-    if ing_sel == "🎭 Roleplay":
+    if ing_sel == "Roleplay":
         st.markdown("### 🎭 Roleplay de situaciones reales")
         st.caption("Elegí una situación y practicá inglés real como si estuvieras ahí.")
 
@@ -1166,7 +1166,7 @@ with tab_english:
                 guardar_usuario(user); st.rerun()
 
     # ── TRADUCTOR INTELIGENTE ──
-    if ing_sel == "📖 Traductor":
+    if ing_sel == "Traductor":
         st.markdown("### 📖 Traductor inteligente")
         st.caption("Pegá cualquier texto en inglés y Alex lo traduce, explica palabra por palabra y enseña la gramática.")
 
@@ -1182,7 +1182,7 @@ with tab_english:
             for m in ultimas: render_msg(m["role"],m["content"],"english")
 
     # ── DIARIO EN INGLÉS ──
-    if ing_sel == "📓 Diario":
+    if ing_sel == "Diario":
         st.markdown("### 📓 Diario en inglés")
         st.caption("Escribí todos los días aunque sea 3 oraciones. Alex las corrige y guardás tu progreso.")
 
@@ -1218,7 +1218,7 @@ with tab_english:
                         st.write(e["texto"])
 
     # ── CERTIFICADO ──
-    if ing_sel == "🏆 Certificado":
+    if ing_sel == "Certificado":
         st.markdown("### 🏆 Certificado de nivel")
         st.caption("Completá todas las lecciones de un nivel para descargar tu certificado oficial.")
 
@@ -1249,7 +1249,7 @@ with tab_english:
             st.write("")
 
     # ── CHAT CON ALEX ──
-    if ing_sel == "💬 Chat con Alex":
+    if ing_sel == "Chat con Alex":
         st.markdown("<p style='font-size:16px;font-weight:800;color:#a855f7;margin:8px 0 2px'>💬 Chat con Alex</p>", unsafe_allow_html=True)
         st.caption("Preguntale dudas, pedile ejercicios o practicá conversación.")
 
@@ -1747,12 +1747,13 @@ with tab_mate:
     if "mate_lecciones_completadas" not in user: user["mate_lecciones_completadas"] = []
     if "mate_messages" not in user: user["mate_messages"] = []
 
-    mate_sel = st.selectbox("Seleccioná:", ["📖 Lecciones", "🧮 Calculadora", "💬 Chat con Bruno"],
-        key="mate_sel", label_visibility="collapsed")
+    mate_sel = st.selectbox("Sección de matemáticas:", 
+        ["Lecciones", "Calculadora de negocios", "Chat con Bruno"],
+        key="mate_sel")
     st.divider()
 
     # ── LECCIONES DE MATEMÁTICAS ──
-    if mate_sel == "📖 Lecciones":
+    if mate_sel == "Lecciones":
         niv_mate = st.selectbox("Tu nivel de matemáticas:", ["Básico", "Intermedio", "Negocios"],
             index=["Básico", "Intermedio", "Negocios"].index(user.get("mate_nivel", "Básico")),
             key="sel_mate_nivel")
@@ -1833,7 +1834,7 @@ with tab_mate:
                         mime="application/pdf", key=f"dl_mate_{nivel_cert}")
 
     # ── CALCULADORA DE NEGOCIOS ──
-    if mate_sel == "🧮 Calculadora":
+    if mate_sel == "Calculadora de negocios":
         st.markdown("### 🧮 Calculadora de negocios")
         st.caption("Ingresá tus números y Bruno te explica el resultado paso a paso.")
 
@@ -1926,7 +1927,7 @@ with tab_mate:
                 st.markdown(f'<div class="chat-english" style="border-left-color:#22c55e"><div class="chat-name-english" style="color:#22c55e!important">🔢 Bruno — Profesor de Matemáticas</div><div class="chat-text">{ul_mate}</div></div>', unsafe_allow_html=True)
 
     # ── CHAT CON BRUNO ──
-    if mate_sel == "💬 Chat con Bruno":
+    if mate_sel == "Chat con Bruno":
         st.markdown("<p style='font-size:16px;font-weight:800;color:#22c55e;margin:8px 0 2px'>💬 Chat con Bruno</p>", unsafe_allow_html=True)
         st.caption("Preguntale dudas o pedile ejercicios con ejemplos de tu negocio.")
 
@@ -1983,14 +1984,14 @@ with tab_mate:
 with tab_herramientas:
     st.markdown('<div class="hero-card"><h2>🛠️ Herramientas</h2><p class="small-text">Analizá tu competencia, generá contenido listo para publicar y descubrí herramientas para crecer.</p></div>', unsafe_allow_html=True)
 
-    herr_sel = st.selectbox("Seleccioná una herramienta:", 
-        ["🔍 Analizar competencia", "✍️ Generar contenido", "🤝 Afiliados", 
-         "📋 Plantillas", "🎨 Marca personal", "💰 Finanzas personales"],
-        key="herr_sel", label_visibility="collapsed")
+    herr_sel = st.selectbox("Seleccioná una herramienta:",
+        ["Analizar competencia", "Generar contenido", "Afiliados",
+         "Plantillas descargables", "Marca personal", "Finanzas personales"],
+        key="herr_sel")
     st.divider()
 
     # ── ANÁLISIS DE COMPETENCIA ──
-    if herr_sel == "🔍 Analizar competencia":
+    if herr_sel == "Analizar competencia":
         st.markdown("### 🔍 Análisis de competencia")
         st.caption("Describí a tu competidor y el mentor te dice cómo superarlo con un plan concreto.")
 
@@ -2059,7 +2060,7 @@ Sé específico y práctico. Sin vaguedades."""
             )
 
     # ── GENERADOR DE CONTENIDO ──
-    if herr_sel == "✍️ Generar contenido":
+    if herr_sel == "Generar contenido":
         st.markdown("### ✍️ Generador de contenido")
         st.caption("Describí tu producto y generamos el texto listo para copiar y publicar.")
 
@@ -2160,7 +2161,7 @@ Generá contenido que realmente venda, no genérico."""
                 st.rerun()
 
     # ── AFILIADOS ──
-    if herr_sel == "🤝 Afiliados":
+    if herr_sel == "Afiliados":
         st.markdown("### 🤝 Herramientas recomendadas")
         st.caption("Las mejores herramientas para hacer crecer tu negocio. Usadas y recomendadas por AV MentorAI.")
 
@@ -2275,7 +2276,7 @@ Generá contenido que realmente venda, no genérico."""
         st.markdown('<div class="card"><p class="small-text">💡 <b>¿Usás alguna de estas herramientas?</b> Contale al mentor de negocios cuál usás y te ayuda a sacarle el máximo provecho.</p></div>', unsafe_allow_html=True)
 
     # ── PLANTILLAS DESCARGABLES ──
-    if herr_sel == "📋 Plantillas":
+    if herr_sel == "Plantillas descargables":
             st.markdown("### 📋 Plantillas descargables")
             st.caption("Copiá y usá estas plantillas hoy mismo. Están listas para adaptar a tu negocio.")
 
@@ -2320,7 +2321,7 @@ Generá contenido que realmente venda, no genérico."""
                     file_name="plantilla_personalizada.txt", mime="text/plain", key="dl_pers")
 
     # ── MARCA PERSONAL ──
-    if herr_sel == "🎨 Marca personal":
+    if herr_sel == "Marca personal":
             st.markdown("### 🎨 Creador de marca personal")
             st.caption("La IA te ayuda a crear tu identidad: nombre, bio, colores y estilo para Instagram.")
 
@@ -2374,7 +2375,7 @@ Sé específico y creativo. Pensá en marcas que la gente quiera seguir."""
                     st.rerun()
 
     # ── FINANZAS PERSONALES ──
-    if herr_sel == "💰 Finanzas personales":
+    if herr_sel == "Finanzas personales":
             st.markdown("### 💰 Finanzas personales con IA")
             st.caption("Controlá tu plata, armá tu presupuesto y tomá mejores decisiones financieras.")
 
