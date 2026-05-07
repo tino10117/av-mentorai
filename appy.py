@@ -406,17 +406,26 @@ h1,h2,h3,h4,p,label,span{color:#f8fafc!important;}
 [data-testid="stAudioInput"] *{background:#1e293b!important;color:#f8fafc!important;}
 [data-testid="stExpander"]{background:rgba(15,23,42,.88)!important;border:1px solid rgba(250,204,21,.25)!important;border-radius:16px!important;}
 
-/* SELECTOR DE NAVEGACIÓN */
-[data-testid="stSelectbox"] > div > div {
-    background: linear-gradient(90deg,rgba(250,204,21,.15),rgba(56,189,248,.08)) !important;
-    border: 2px solid rgba(250,204,21,.5) !important;
-    border-radius: 14px !important;
-    color: #f8fafc !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    padding: 4px 8px !important;
+/* RADIO BUTTONS COMO TABS */
+div[data-testid="stRadio"] > div {
+    gap: 8px !important;
+    flex-wrap: wrap !important;
 }
-[data-testid="stSelectbox"] svg { fill: #facc15 !important; }
+div[data-testid="stRadio"] label {
+    background: rgba(15,23,42,.88) !important;
+    border: 1px solid rgba(148,163,184,.25) !important;
+    border-radius: 10px !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    color: #cbd5e1 !important;
+}
+div[data-testid="stRadio"] label:has(input:checked) {
+    background: rgba(250,204,21,.15) !important;
+    border-color: #facc15 !important;
+    color: #facc15 !important;
+}
 
 /* FORZAR BOTÓN HAMBURGUESA VISIBLE EN MOBILE */
 [data-testid="stSidebarCollapsedControl"]{
@@ -1050,9 +1059,9 @@ with tab_english:
     st.markdown('<div class="english-card"><h2>📚 Aprender Inglés</h2><p class="small-text">Lecciones offline + Quiz + Roleplay + Traductor + Diario + Certificado</p></div>',unsafe_allow_html=True)
 
     # Sub-navegación
-    ing_sel = st.selectbox("Sección de inglés:", 
+    ing_sel = st.radio("", 
         ["Lecciones", "Roleplay", "Traductor", "Diario", "Certificado", "Chat con Alex"],
-        key="ing_sel")
+        key="ing_sel", horizontal=True, label_visibility="collapsed")
     st.divider()
 
     # ── LECCIONES ──
@@ -1747,9 +1756,9 @@ with tab_mate:
     if "mate_lecciones_completadas" not in user: user["mate_lecciones_completadas"] = []
     if "mate_messages" not in user: user["mate_messages"] = []
 
-    mate_sel = st.selectbox("Sección de matemáticas:", 
+    mate_sel = st.radio("",
         ["Lecciones", "Calculadora de negocios", "Chat con Bruno"],
-        key="mate_sel")
+        key="mate_sel", horizontal=True, label_visibility="collapsed")
     st.divider()
 
     # ── LECCIONES DE MATEMÁTICAS ──
@@ -1984,10 +1993,10 @@ with tab_mate:
 with tab_herramientas:
     st.markdown('<div class="hero-card"><h2>🛠️ Herramientas</h2><p class="small-text">Analizá tu competencia, generá contenido listo para publicar y descubrí herramientas para crecer.</p></div>', unsafe_allow_html=True)
 
-    herr_sel = st.selectbox("Seleccioná una herramienta:",
+    herr_sel = st.radio("",
         ["Analizar competencia", "Generar contenido", "Afiliados",
-         "Plantillas descargables", "Marca personal", "Finanzas personales"],
-        key="herr_sel")
+         "Plantillas", "Marca personal", "Finanzas"],
+        key="herr_sel", horizontal=True, label_visibility="collapsed")
     st.divider()
 
     # ── ANÁLISIS DE COMPETENCIA ──
@@ -2276,7 +2285,7 @@ Generá contenido que realmente venda, no genérico."""
         st.markdown('<div class="card"><p class="small-text">💡 <b>¿Usás alguna de estas herramientas?</b> Contale al mentor de negocios cuál usás y te ayuda a sacarle el máximo provecho.</p></div>', unsafe_allow_html=True)
 
     # ── PLANTILLAS DESCARGABLES ──
-    if herr_sel == "Plantillas descargables":
+    if herr_sel == "Plantillas":
             st.markdown("### 📋 Plantillas descargables")
             st.caption("Copiá y usá estas plantillas hoy mismo. Están listas para adaptar a tu negocio.")
 
@@ -2375,7 +2384,7 @@ Sé específico y creativo. Pensá en marcas que la gente quiera seguir."""
                     st.rerun()
 
     # ── FINANZAS PERSONALES ──
-    if herr_sel == "Finanzas personales":
+    if herr_sel == "Finanzas":
             st.markdown("### 💰 Finanzas personales con IA")
             st.caption("Controlá tu plata, armá tu presupuesto y tomá mejores decisiones financieras.")
 
