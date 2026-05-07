@@ -393,9 +393,17 @@ h1,h2,h3,h4,p,label,span{color:#f8fafc!important;}
 .guide-text{color:#94a3b8!important;font-size:14px;text-align:center;padding:10px;border:1px dashed rgba(148,163,184,.3);border-radius:12px;margin-bottom:12px;}
 .stButton>button{border-radius:12px;border:1px solid rgba(250,204,21,.45);background:linear-gradient(90deg,#facc15,#f97316);color:#111827;font-weight:800;font-size:14px;}
 .stTextInput input,.stTextArea textarea{background-color:#0f172a!important;color:#f8fafc!important;border-radius:12px!important;border:1px solid rgba(250,204,21,.3)!important;}
-[data-testid="stChatInput"] textarea{background-color:#1e293b!important;color:#f8fafc!important;border:2px solid rgba(250,204,21,.6)!important;border-radius:14px!important;font-size:15px!important;}
-[data-testid="stChatInput"]{background-color:#1e293b!important;border:2px solid rgba(250,204,21,.6)!important;border-radius:14px!important;}
-[data-testid="stChatInput"] > div{background-color:#1e293b!important;border-radius:14px!important;}
+/* CHAT INPUT */
+[data-testid="stChatInput"]{background:#1e293b!important;border:2px solid #facc15!important;border-radius:16px!important;padding:4px!important;}
+[data-testid="stChatInput"] > div{background:#1e293b!important;border-radius:14px!important;}
+[data-testid="stChatInput"] textarea{background:#1e293b!important;color:#f8fafc!important;font-size:15px!important;border:none!important;}
+[data-testid="stChatInput"] textarea::placeholder{color:#facc15!important;opacity:0.8!important;font-size:14px!important;}
+
+/* AUDIO INPUT — fondo oscuro */
+[data-testid="stAudioInput"]{background:#1e293b!important;border:1px solid rgba(250,204,21,.3)!important;border-radius:14px!important;}
+[data-testid="stAudioInput"] > div{background:#1e293b!important;border-radius:14px!important;}
+[data-testid="stAudioInput"] button{background:#1e293b!important;}
+[data-testid="stAudioInput"] *{background:#1e293b!important;color:#f8fafc!important;}
 [data-testid="stExpander"]{background:rgba(15,23,42,.88)!important;border:1px solid rgba(250,204,21,.25)!important;border-radius:16px!important;}
 @media(max-width:768px){.av-logo{font-size:32px;}.chat-text{font-size:14px;}.block-container{padding-left:.8rem;padding-right:.8rem;}.metric-chip .metric-value{font-size:14px;}}
 </style>
@@ -960,7 +968,7 @@ with tab_mentor:
             try: vp=transcribir_audio(audio); st.success(f"Escuché: *{vp}*")
             except Exception as e: st.warning(f"Error: {e}")
 
-    ui=st.chat_input("Escribí tu pregunta al mentor...")
+    ui=st.chat_input("✍️ Escribí tu pregunta acá...")
     if vp: ui=vp
     elif qp: ui=qp
     if ui:
@@ -1082,7 +1090,7 @@ with tab_english:
                     try: ve_rp=transcribir_audio(audio_rp); st.info(f"Dijiste: *{ve_rp}*")
                     except: pass
 
-            rp_input=st.chat_input("Escribí en inglés para el roleplay...")
+            rp_input=st.chat_input("✍️ Escribí en inglés acá...")
             if ve_rp: rp_input=ve_rp
             if rp_input: enviar_english(rp_input,modo="roleplay",lista_msgs_key="english_roleplay_messages")
 
@@ -1207,7 +1215,7 @@ with tab_english:
                 try: ve=transcribir_audio(audio_eng); st.info(f"Transcribí: *{ve}*")
                 except: pass
 
-        ei=st.chat_input("Escribile a Alex tu profesor de inglés...")
+        ei=st.chat_input("✍️ Escribile a Alex acá...")
         if ve: ei=f"Grabé esto en inglés: '{ve}'. ¿Está bien dicho? Corregime si hay errores."
         elif eq: ei=eq
         if ei: enviar_english(ei,modo="chat",lista_msgs_key="english_messages")
@@ -1873,7 +1881,7 @@ with tab_mate:
             if st.button("🎯 Dame un ejercicio", key="bmate5"): bq_mate = "Dame un ejercicio de matemáticas de negocios para practicar."
             if st.button("🔢 Regla de tres", key="bmate6"): bq_mate = "Explicame la regla de tres con ejemplos de ventas y productos."
 
-        mate_input = st.chat_input("Preguntale a Bruno sobre matemáticas...")
+        mate_input = st.chat_input("✍️ Preguntale a Bruno acá...")
         if bq_mate: mate_input = bq_mate
         if mate_input:
             enviar_mate(mate_input)
