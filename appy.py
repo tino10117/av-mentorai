@@ -964,23 +964,10 @@ with st.expander("⚙️ Configuración y perfil", expanded=False):
 # ─────────────────────────────────────────
 # TABS
 # ─────────────────────────────────────────
-pagina = st.session_state.get("pagina","mentor")
-
-
-
-# Crear variables para cada "tab" usando contenedores condicionales
-tab_mentor = None; tab_english = None; tab_mate = None; tab_herramientas = None
-tab_progreso = None; tab_desafios = None; tab_premium = None; tab_ranking = None; tab_feedback = None
-
-if pagina=="mentor": tab_mentor = st.container()
-elif pagina=="ingles": tab_english = st.container()
-elif pagina=="mate": tab_mate = st.container()
-elif pagina=="herramientas": tab_herramientas = st.container()
-elif pagina=="progreso": tab_progreso = st.container()
-elif pagina=="desafios": tab_desafios = st.container()
-elif pagina=="premium": tab_premium = st.container()
-elif pagina=="ranking": tab_ranking = st.container()
-elif pagina=="feedback": tab_feedback = st.container()
+tab_mentor, tab_english, tab_mate, tab_herramientas, tab_progreso, tab_desafios, tab_premium, tab_ranking, tab_feedback = st.tabs([
+    "🧠 Mentor", "📚 Inglés", "🔢 Mate", "🛠️ Herramientas",
+    "📈 Progreso", "🔥 Desafíos", "💎 Premium", "🏆 Ranking", "💬 Feedback"
+])
 
 # ════════════════════════════════════════
 # TAB MENTOR
