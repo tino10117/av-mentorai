@@ -393,7 +393,9 @@ h1,h2,h3,h4,p,label,span{color:#f8fafc!important;}
 .guide-text{color:#94a3b8!important;font-size:14px;text-align:center;padding:10px;border:1px dashed rgba(148,163,184,.3);border-radius:12px;margin-bottom:12px;}
 .stButton>button{border-radius:12px;border:1px solid rgba(250,204,21,.45);background:linear-gradient(90deg,#facc15,#f97316);color:#111827;font-weight:800;font-size:14px;}
 .stTextInput input,.stTextArea textarea{background-color:#0f172a!important;color:#f8fafc!important;border-radius:12px!important;border:1px solid rgba(250,204,21,.3)!important;}
-[data-testid="stChatInput"] textarea{background-color:#0f172a!important;color:#f8fafc!important;border:1px solid rgba(250,204,21,.35)!important;border-radius:14px!important;}
+[data-testid="stChatInput"] textarea{background-color:#1e293b!important;color:#f8fafc!important;border:2px solid rgba(250,204,21,.6)!important;border-radius:14px!important;font-size:15px!important;}
+[data-testid="stChatInput"]{background-color:#1e293b!important;border:2px solid rgba(250,204,21,.6)!important;border-radius:14px!important;}
+[data-testid="stChatInput"] > div{background-color:#1e293b!important;border-radius:14px!important;}
 [data-testid="stExpander"]{background:rgba(15,23,42,.88)!important;border:1px solid rgba(250,204,21,.25)!important;border-radius:16px!important;}
 @media(max-width:768px){.av-logo{font-size:32px;}.chat-text{font-size:14px;}.block-container{padding-left:.8rem;padding-right:.8rem;}.metric-chip .metric-value{font-size:14px;}}
 </style>
