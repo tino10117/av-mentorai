@@ -526,11 +526,29 @@ def obtener_ultima_respuesta(msgs):
 
 def render_msg(role,content,tipo="negocio"):
     if role=="user":
-        st.markdown(f'<div class="chat-user"><div class="chat-name">Vos</div><div class="chat-text">{content}</div></div>',unsafe_allow_html=True)
+        st.markdown(f'''<div class="chat-user">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#facc15,#f97316);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">😊</div>
+            <div class="chat-name" style="margin:0">Vos</div>
+        </div>
+        <div class="chat-text" style="padding-left:44px">{content}</div>
+        </div>''',unsafe_allow_html=True)
     elif tipo=="english":
-        st.markdown(f'<div class="chat-english"><div class="chat-name-english">🎓 Alex — Profesor de Inglés</div><div class="chat-text">{content}</div></div>',unsafe_allow_html=True)
+        st.markdown(f'''<div class="chat-english">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🎓</div>
+            <div class="chat-name-english" style="margin:0">Alex — Profesor de Inglés</div>
+        </div>
+        <div class="chat-text" style="padding-left:44px">{content}</div>
+        </div>''',unsafe_allow_html=True)
     else:
-        st.markdown(f'<div class="chat-ai"><div class="chat-name-ai">⚡ AV MentorAI</div><div class="chat-text">{content}</div></div>',unsafe_allow_html=True)
+        st.markdown(f'''<div class="chat-ai">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#38bdf8,#6366f1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">⚡</div>
+            <div class="chat-name-ai" style="margin:0">AV MentorAI</div>
+        </div>
+        <div class="chat-text" style="padding-left:44px">{content}</div>
+        </div>''',unsafe_allow_html=True)
 
 # ─── System prompts ───
 def system_negocio(user,modo,desafio):
@@ -764,17 +782,50 @@ st.markdown(f'<div class="hero-card"><div class="av-logo">{APP_NAME}</div><div c
 
 loks=len(user.get("english_lecciones_completadas",[]))
 diary_count=len(user.get("english_diary",[]))
-st.markdown(f"""<div class="metrics-row">
-  <div class="metric-chip"><p class="metric-label">👤 Usuario</p><p class="metric-value">{user['nombre']}</p></div>
-  <div class="metric-chip"><p class="metric-label">⭐ XP</p><p class="metric-value">{user['xp']}</p></div>
-  <div class="metric-chip"><p class="metric-label">🔥 Racha</p><p class="metric-value">{plural_dias(user['racha'])}</p></div>
-  <div class="metric-chip"><p class="metric-label">📈 Nivel</p><p class="metric-value">{calcular_nivel(user['xp']).split(' - ')[0]}</p></div>
-  <div class="metric-chip"><p class="metric-label">📚 Inglés</p><p class="metric-value">{loks} lecc.</p></div>
-  <div class="metric-chip"><p class="metric-label">📓 Diario</p><p class="metric-value">{diary_count} entr.</p></div>
-  <div class="metric-chip"><p class="metric-label">💎 Plan</p><p class="metric-value">{user['plan']}</p></div>
-</div>""",unsafe_allow_html=True)
-st.progress(progreso_nivel(user["xp"]))
-st.caption(f"{calcular_nivel(user['xp'])} — Progreso al siguiente nivel")
+nivel_txt=calcular_nivel(user["xp"])
+prog=progreso_nivel(user["xp"])
+prog_pct=int(prog*100)
+m1,m2,m3,m4=st.columns(4)
+with m1:
+    st.markdown(f'''<div style="background:linear-gradient(135deg,rgba(250,204,21,.2),rgba(250,204,21,.05));border:1px solid rgba(250,204,21,.4);border-radius:16px;padding:14px;text-align:center">
+    <div style="font-size:28px">👤</div>
+    <div style="font-size:11px;color:#94a3b8;margin:4px 0">USUARIO</div>
+    <div style="font-size:16px;font-weight:800;color:#facc15">{user["nombre"]}</div>
+    </div>''',unsafe_allow_html=True)
+with m2:
+    st.markdown(f'''<div style="background:linear-gradient(135deg,rgba(249,115,22,.2),rgba(249,115,22,.05));border:1px solid rgba(249,115,22,.4);border-radius:16px;padding:14px;text-align:center">
+    <div style="font-size:28px">⭐</div>
+    <div style="font-size:11px;color:#94a3b8;margin:4px 0">XP TOTAL</div>
+    <div style="font-size:20px;font-weight:800;color:#f97316">{user["xp"]}</div>
+    </div>''',unsafe_allow_html=True)
+with m3:
+    st.markdown(f'''<div style="background:linear-gradient(135deg,rgba(239,68,68,.2),rgba(239,68,68,.05));border:1px solid rgba(239,68,68,.4);border-radius:16px;padding:14px;text-align:center">
+    <div style="font-size:28px">🔥</div>
+    <div style="font-size:11px;color:#94a3b8;margin:4px 0">RACHA</div>
+    <div style="font-size:20px;font-weight:800;color:#ef4444">{plural_dias(user["racha"])}</div>
+    </div>''',unsafe_allow_html=True)
+with m4:
+    st.markdown(f'''<div style="background:linear-gradient(135deg,rgba(56,189,248,.2),rgba(56,189,248,.05));border:1px solid rgba(56,189,248,.4);border-radius:16px;padding:14px;text-align:center">
+    <div style="font-size:28px">💎</div>
+    <div style="font-size:11px;color:#94a3b8;margin:4px 0">PLAN</div>
+    <div style="font-size:16px;font-weight:800;color:#38bdf8">{user["plan"]}</div>
+    </div>''',unsafe_allow_html=True)
+st.write("")
+st.markdown(f'''<div style="background:rgba(15,23,42,.88);border:1px solid rgba(148,163,184,.2);border-radius:14px;padding:14px">
+<div style="display:flex;justify-content:space-between;margin-bottom:6px">
+  <span style="color:#f8fafc;font-size:13px;font-weight:700">{nivel_txt}</span>
+  <span style="color:#facc15;font-size:13px;font-weight:700">{prog_pct}%</span>
+</div>
+<div style="background:rgba(148,163,184,.15);border-radius:8px;height:10px;overflow:hidden">
+  <div style="background:linear-gradient(90deg,#facc15,#f97316);height:100%;width:{prog_pct}%;border-radius:8px;transition:width .3s"></div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:8px">
+  <span style="color:#94a3b8;font-size:11px">📚 {loks} lecciones inglés</span>
+  <span style="color:#94a3b8;font-size:11px">📓 {diary_count} entradas diario</span>
+  <span style="color:#94a3b8;font-size:11px">🎯 {user.get("objetivos_completados",0)} objetivos</span>
+</div>
+</div>''',unsafe_allow_html=True)
+st.write("")
 
 # Configuración
 with st.expander("⚙️ Configuración y perfil",expanded=False):
@@ -831,16 +882,28 @@ with tab_mentor:
     st.divider()
     if not user["messages"]: st.markdown('<div class="guide-text">👇 Tocá un botón o escribí tu primera pregunta abajo</div>',unsafe_allow_html=True)
 
-    c1,c2,c3=st.columns(3); qp=None
+    # Botones rápidos con colores individuales via CSS
+    st.markdown("""<style>
+    div[data-testid="column"]:nth-child(1) .stButton>button{background:linear-gradient(90deg,#f59e0b,#d97706)!important;color:#111!important;}
+    div[data-testid="column"]:nth-child(2) .stButton>button{background:linear-gradient(90deg,#10b981,#059669)!important;color:#fff!important;}
+    div[data-testid="column"]:nth-child(3) .stButton>button{background:linear-gradient(90deg,#6366f1,#4f46e5)!important;color:#fff!important;}
+    div[data-testid="column"]:nth-child(4) .stButton>button{background:linear-gradient(90deg,#ef4444,#dc2626)!important;color:#fff!important;}
+    div[data-testid="column"]:nth-child(5) .stButton>button{background:linear-gradient(90deg,#8b5cf6,#7c3aed)!important;color:#fff!important;}
+    div[data-testid="column"]:nth-child(6) .stButton>button{background:linear-gradient(90deg,#0ea5e9,#0284c7)!important;color:#fff!important;}
+    </style>""", unsafe_allow_html=True)
+    c1,c2,c3,c4,c5,c6=st.columns(6); qp=None
     with c1:
-        if st.button("💡 Idea de negocio"): qp="Dame una idea de negocio rentable para empezar con pocos recursos."
-        if st.button("🎭 Cliente difícil"): qp="Hagamos una simulación. Vos sos un cliente difícil y yo tengo que venderte."
+        if st.button("💡 Idea", use_container_width=True, key="qb1"): qp="Dame una idea de negocio rentable para empezar con pocos recursos."
     with c2:
-        if st.button("📈 Quiero vender más"): qp="Quiero vender más. Dame un plan práctico para empezar hoy."
-        if st.button("🔥 Desafío de hoy"): qp=f"Quiero hacer este desafío: {desafio}. Guiame paso a paso."
+        if st.button("📈 Vender", use_container_width=True, key="qb2"): qp="Quiero vender más. Dame un plan práctico para empezar hoy."
     with c3:
-        if st.button("📱 Marketing en redes"): qp="Quiero aprender marketing desde cero para vender por redes sociales."
-        if st.button("💎 Mentor exigente"): qp="Háblame como mentor exigente y decime qué debería mejorar hoy."
+        if st.button("📱 Marketing", use_container_width=True, key="qb3"): qp="Quiero aprender marketing desde cero para vender por redes sociales."
+    with c4:
+        if st.button("🎭 Cliente", use_container_width=True, key="qb4"): qp="Hagamos una simulación. Vos sos un cliente difícil y yo tengo que venderte."
+    with c5:
+        if st.button("🔥 Desafío", use_container_width=True, key="qb5"): qp=f"Quiero hacer este desafío: {desafio}. Guiame paso a paso."
+    with c6:
+        if st.button("💎 Mentor", use_container_width=True, key="qb6"): qp="Háblame como mentor exigente y decime qué debería mejorar hoy."
 
     with st.expander("📎 Adjuntar imagen o archivo (opcional)",expanded=False):
         arch=st.file_uploader("Archivo:",type=["jpg","jpeg","png","webp","pdf","txt"],label_visibility="collapsed")
@@ -2075,4 +2138,3 @@ Generá contenido que realmente venda, no genérico."""
 
         st.divider()
         st.markdown('<div class="card"><p class="small-text">💡 <b>¿Usás alguna de estas herramientas?</b> Contale al mentor de negocios cuál usás y te ayuda a sacarle el máximo provecho.</p></div>', unsafe_allow_html=True)
-
