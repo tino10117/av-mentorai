@@ -771,7 +771,7 @@ def enviar_negocio(ui,desafio,ib64=None,im=None,na=None):
     sumar_xp(10)
     hist=[{"role":m["role"],"content":m["content"]} for m in user["messages"][:-1]]
     hist.append({"role":"user","content":ca})
-    keywords_web=["tendencia","precio","competidor","competencia","mercado","hoy","dólar","inflación","noticia","busca","buscá","cuánto vale","cuánto cuesta","qué está pasando","2025","actualidad"]
+    keywords_web=["tendencia","precio","competidor","competencia","mercado","hoy","dólar","inflación","noticia","busca","buscá","cuánto vale","cuánto cuesta","qué está pasando","2026","actualidad"]
     necesita_web=any(kw in (ui or "").lower() for kw in keywords_web)
     with st.spinner("🌐 Buscando en internet..." if necesita_web else "⚡ AV MentorAI está pensando..."):
         try:
@@ -1138,7 +1138,7 @@ with tab_mentor:
     wb1,wb2,wb3=st.columns(3)
     with wb1:
         if st.button("📊 Tendencias del rubro", use_container_width=True, key="wb1"):
-            st.session_state.neg_quick=f"Buscá las tendencias actuales del mercado de {user.get('tipo_negocio','negocios')} en Argentina para 2025. ¿Qué está creciendo?"
+            st.session_state.neg_quick=f"Buscá las tendencias actuales del mercado de {user.get('tipo_negocio','negocios')} en Argentina para 2026. ¿Qué está creciendo?"
     with wb2:
         if st.button("🔍 Info de competencia", use_container_width=True, key="wb2"):
             st.session_state.neg_quick=f"Buscá información actualizada sobre la competencia en el rubro de {user.get('tipo_negocio','negocios')} en Argentina. ¿Qué están haciendo?"
