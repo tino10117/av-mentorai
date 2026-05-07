@@ -808,8 +808,8 @@ with st.expander("⚙️ Configuración y perfil",expanded=False):
 # ─────────────────────────────────────────
 # TABS
 # ─────────────────────────────────────────
-tab_mentor,tab_english,tab_mate,tab_progreso,tab_desafios,tab_premium,tab_ranking,tab_feedback=st.tabs([
-    "🧠 Mentor","📚 Aprender Inglés","🔢 Aprender Matemáticas","📈 Progreso","🔥 Desafíos","💎 Premium","🏆 Ranking","💬 Feedback"
+tab_mentor,tab_english,tab_mate,tab_herramientas,tab_progreso,tab_desafios,tab_premium,tab_ranking,tab_feedback=st.tabs([
+    "🧠 Mentor","📚 Aprender Inglés","🔢 Aprender Matemáticas","🛠️ Herramientas","📈 Progreso","🔥 Desafíos","💎 Premium","🏆 Ranking","💬 Feedback"
 ])
 
 # ════════════════════════════════════════
@@ -1782,4 +1782,297 @@ with tab_mate:
 
         if st.button("🗑️ Borrar chat de Bruno", key="borrar_mate"):
             user["mate_messages"] = []; guardar_usuario(user); st.rerun()
+
+# ════════════════════════════════════════
+# TAB HERRAMIENTAS
+# ════════════════════════════════════════
+with tab_herramientas:
+    st.markdown('<div class="hero-card"><h2>🛠️ Herramientas</h2><p class="small-text">Analizá tu competencia, generá contenido listo para publicar y descubrí herramientas para crecer.</p></div>', unsafe_allow_html=True)
+
+    herr_tabs = st.tabs(["🔍 Analizar competencia", "✍️ Generar contenido", "🤝 Afiliados"])
+
+    # ── ANÁLISIS DE COMPETENCIA ──
+    with herr_tabs[0]:
+        st.markdown("### 🔍 Análisis de competencia")
+        st.caption("Describí a tu competidor y el mentor te dice cómo superarlo con un plan concreto.")
+
+        comp_nombre = st.text_input("Nombre del competidor:", placeholder="Ej: Tienda Ropa Valentino, Supermercado El Barrio...", key="comp_nombre")
+        comp_rubro = st.text_input("Rubro o tipo de negocio:", placeholder="Ej: ropa, supermercado, ecommerce, comida...", key="comp_rubro")
+        comp_ig = st.text_input("Instagram o web (opcional):", placeholder="Ej: @tiendaropa o www.tienda.com", key="comp_ig")
+        comp_desc = st.text_area("¿Qué sabés de este competidor? Describilo:", 
+            placeholder="Ej: Tiene mucha clientela, sus precios son más bajos que los míos, publica mucho en Instagram, tiene local en el centro...",
+            height=120, key="comp_desc")
+        comp_mi_negocio = st.text_area("¿Cómo es tu negocio en comparación?",
+            placeholder="Ej: Yo vendo online, tengo precios similares pero menos clientes, mi producto es de mejor calidad...",
+            height=100, key="comp_mi_negocio")
+
+        if st.button("🔍 Analizar y crear plan para superarlo", key="btn_comp"):
+            if comp_nombre.strip() and comp_desc.strip():
+                prompt_comp = f"""Analizá este competidor y dame un plan concreto para superarlo:
+
+COMPETIDOR:
+- Nombre: {comp_nombre}
+- Rubro: {comp_rubro}
+- Instagram/web: {comp_ig or 'No especificado'}
+- Descripción: {comp_desc}
+
+MI NEGOCIO EN COMPARACIÓN:
+{comp_mi_negocio or 'No especificado'}
+
+Dame:
+1. Análisis de qué hace bien este competidor (sus fortalezas)
+2. Sus debilidades o puntos débiles que puedo aprovechar
+3. Mis ventajas competitivas reales
+4. Plan concreto de 5 acciones para superarlo
+5. Una estrategia de diferenciación clara
+
+Sé específico y práctico. Sin vaguedades."""
+
+                user = st.session_state.user_data
+                with st.spinner("🔍 Analizando competidor..."):
+                    try:
+                        r = client.chat.completions.create(
+                            model="gpt-4o",
+                            messages=[
+                                {"role": "system", "content": system_negocio(user, st.session_state.modo, "")},
+                                {"role": "user", "content": prompt_comp}
+                            ],
+                            temperature=0.8, max_tokens=1200
+                        )
+                        resp_comp = r.choices[0].message.content
+                        st.session_state.ultimo_analisis = resp_comp
+                        sumar_xp(15)
+                        guardar_usuario(user)
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+            else:
+                st.warning("Completá al menos el nombre y la descripción del competidor.")
+
+        if st.session_state.get("ultimo_analisis"):
+            st.divider()
+            st.markdown("### 📊 Análisis completo")
+            st.markdown(f'<div class="card" style="border-color:rgba(56,189,248,.4)">{st.session_state.ultimo_analisis}</div>', unsafe_allow_html=True)
+            st.download_button(
+                "⬇️ Descargar análisis",
+                data=st.session_state.ultimo_analisis,
+                file_name=f"analisis_{comp_nombre.lower().replace(' ','_')}.txt",
+                mime="text/plain",
+                key="dl_analisis"
+            )
+
+    # ── GENERADOR DE CONTENIDO ──
+    with herr_tabs[1]:
+        st.markdown("### ✍️ Generador de contenido")
+        st.caption("Describí tu producto y generamos el texto listo para copiar y publicar.")
+
+        gen_tipo = st.selectbox("¿Dónde vas a publicar?", [
+            "📸 Post de Instagram",
+            "💬 Mensaje de WhatsApp para vender",
+            "🛒 Descripción para Mercado Libre",
+            "📱 Historia de Instagram (Story)",
+            "🎵 Caption para TikTok",
+            "📧 Email de venta a clientes",
+            "🏷️ Título y descripción para producto online",
+        ], key="gen_tipo")
+
+        gen_producto = st.text_input("¿Qué producto o servicio querés promocionar?",
+            placeholder="Ej: remeras de algodón, servicio de limpieza, empanadas caseras...", key="gen_producto")
+        gen_precio = st.text_input("Precio (opcional):", placeholder="Ej: $5.000, 3x$10.000...", key="gen_precio")
+        gen_beneficio = st.text_area("¿Qué lo hace especial o diferente?",
+            placeholder="Ej: son de algodón 100% nacional, entrega en el día, hecho a mano, precio más bajo de la zona...",
+            height=100, key="gen_beneficio")
+        gen_tono = st.selectbox("Tono del mensaje:", [
+            "Divertido y casual",
+            "Profesional y serio",
+            "Urgente (oferta limitada)",
+            "Cercano y amigable",
+            "Aspiracional y premium"
+        ], key="gen_tono")
+        gen_cantidad = st.slider("¿Cuántas versiones querés?", 1, 3, 2, key="gen_cantidad")
+
+        if st.button("✍️ Generar contenido", key="btn_gen"):
+            if gen_producto.strip():
+                tipo_limpio = gen_tipo.split(" ", 1)[1]
+                prompt_gen = f"""Generá {gen_cantidad} versión(es) de contenido para {tipo_limpio}.
+
+PRODUCTO/SERVICIO: {gen_producto}
+PRECIO: {gen_precio or 'No especificado'}
+QUÉ LO HACE ESPECIAL: {gen_beneficio or 'No especificado'}
+TONO: {gen_tono}
+
+Reglas:
+- Escribí en español latino argentino
+- Incluí emojis si corresponde al canal
+- Usá hashtags relevantes si es Instagram o TikTok
+- Sé específico y persuasivo
+- Incluí un call to action claro al final
+- Cada versión separada claramente con "--- VERSIÓN X ---"
+- Para WhatsApp: formato corto y directo, máximo 5 líneas
+- Para Mercado Libre: incluí título optimizado + descripción detallada
+- Para Instagram: incluí caption completo + hashtags
+
+Generá contenido que realmente venda, no genérico."""
+
+                user = st.session_state.user_data
+                with st.spinner("✍️ Generando contenido..."):
+                    try:
+                        r = client.chat.completions.create(
+                            model="gpt-4o",
+                            messages=[
+                                {"role": "system", "content": f"Sos un experto en marketing digital y copywriting para LATAM. Creás contenido que vende de verdad para redes sociales, WhatsApp y marketplaces. Conocés bien el mercado argentino."},
+                                {"role": "user", "content": prompt_gen}
+                            ],
+                            temperature=0.9, max_tokens=1500
+                        )
+                        resp_gen = r.choices[0].message.content
+                        st.session_state.ultimo_contenido = resp_gen
+                        st.session_state.ultimo_gen_tipo = tipo_limpio
+                        sumar_xp(10)
+                        guardar_usuario(user)
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+            else:
+                st.warning("Describí el producto o servicio primero.")
+
+        if st.session_state.get("ultimo_contenido"):
+            st.divider()
+            st.markdown(f"### 📋 Contenido generado para {st.session_state.get('ultimo_gen_tipo','')}")
+            
+            versiones = st.session_state.ultimo_contenido.split("--- VERSIÓN")
+            if len(versiones) > 1:
+                for i, v in enumerate(versiones[1:], 1):
+                    v_limpia = v.replace(f" {i} ---", "").strip()
+                    with st.expander(f"📄 Versión {i}", expanded=True):
+                        st.markdown(f'<div class="card" style="border-color:rgba(168,85,247,.4);white-space:pre-wrap">{v_limpia}</div>', unsafe_allow_html=True)
+                        st.code(v_limpia, language=None)
+            else:
+                st.markdown(f'<div class="card" style="border-color:rgba(168,85,247,.4);white-space:pre-wrap">{st.session_state.ultimo_contenido}</div>', unsafe_allow_html=True)
+                st.code(st.session_state.ultimo_contenido, language=None)
+
+            st.download_button(
+                "⬇️ Descargar contenido",
+                data=st.session_state.ultimo_contenido,
+                file_name=f"contenido_{gen_producto.lower().replace(' ','_')}.txt",
+                mime="text/plain",
+                key="dl_contenido"
+            )
+
+            if st.button("🔄 Generar nuevas versiones", key="btn_regen"):
+                st.session_state.ultimo_contenido = None
+                st.rerun()
+
+    # ── AFILIADOS ──
+    with herr_tabs[2]:
+        st.markdown("### 🤝 Herramientas recomendadas")
+        st.caption("Las mejores herramientas para hacer crecer tu negocio. Usadas y recomendadas por AV MentorAI.")
+
+        herramientas_afiliados = [
+            {
+                "nombre": "Tiendanube",
+                "emoji": "🛍️",
+                "categoria": "Tienda online",
+                "descripcion": "La plataforma de e-commerce más popular de LATAM. Creás tu tienda online en minutos, sin saber programar. Ideal para vender ropa, accesorios, productos y más.",
+                "para_quien": "Para quien quiere vender online sin complicarse",
+                "precio": "Plan gratis disponible",
+                "link": "https://www.tiendanube.com",
+                "color": "#38bdf8"
+            },
+            {
+                "nombre": "Canva",
+                "emoji": "🎨",
+                "categoria": "Diseño",
+                "descripcion": "La herramienta de diseño más fácil del mundo. Creás posts de Instagram, logos, flyers, presentaciones y todo lo que necesitás para tu negocio sin ser diseñador.",
+                "para_quien": "Para quien quiere contenido visual profesional sin contratar diseñador",
+                "precio": "Plan gratis muy completo",
+                "link": "https://www.canva.com",
+                "color": "#a855f7"
+            },
+            {
+                "nombre": "Mercado Pago",
+                "emoji": "💳",
+                "categoria": "Pagos",
+                "descripcion": "El sistema de pagos más usado de Argentina y LATAM. Cobrás con QR, link de pago, tarjeta de crédito y débito. Sin necesitar local físico.",
+                "para_quien": "Para cualquier negocio que quiera cobrar de forma profesional",
+                "precio": "Gratis — cobra comisión por transacción",
+                "link": "https://www.mercadopago.com.ar",
+                "color": "#22c55e"
+            },
+            {
+                "nombre": "WhatsApp Business",
+                "emoji": "📱",
+                "categoria": "Ventas",
+                "descripcion": "La versión de WhatsApp para negocios. Tenés catálogo de productos, respuestas automáticas, etiquetas para organizar clientes y estadísticas de mensajes.",
+                "para_quien": "Para quien vende por WhatsApp y quiere ser más profesional",
+                "precio": "100% gratis",
+                "link": "https://business.whatsapp.com",
+                "color": "#facc15"
+            },
+            {
+                "nombre": "Notion",
+                "emoji": "📋",
+                "categoria": "Organización",
+                "descripcion": "La herramienta perfecta para organizar tu negocio. Anotás ideas, hacés listas de tareas, seguimiento de clientes, presupuestos y mucho más en un solo lugar.",
+                "para_quien": "Para quien quiere tener todo su negocio organizado",
+                "precio": "Plan gratis disponible",
+                "link": "https://www.notion.so",
+                "color": "#f97316"
+            },
+            {
+                "nombre": "Mailchimp",
+                "emoji": "📧",
+                "categoria": "Email marketing",
+                "descripcion": "Enviás emails masivos a tus clientes de forma profesional. Promociones, novedades, newsletter. Muy fácil de usar y con plantillas listas.",
+                "para_quien": "Para quien tiene base de clientes y quiere fidelizarlos",
+                "precio": "Gratis hasta 500 contactos",
+                "link": "https://mailchimp.com",
+                "color": "#38bdf8"
+            },
+            {
+                "nombre": "Later",
+                "emoji": "📅",
+                "categoria": "Redes sociales",
+                "descripcion": "Programás tus posts de Instagram, Facebook y TikTok con anticipación. Subís el contenido una vez por semana y se publica solo en el horario ideal.",
+                "para_quien": "Para quien quiere ser constante en redes sin perder tiempo",
+                "precio": "Plan gratis disponible",
+                "link": "https://later.com",
+                "color": "#a855f7"
+            },
+            {
+                "nombre": "Google My Business",
+                "emoji": "📍",
+                "categoria": "Visibilidad local",
+                "descripcion": "Aparecés en Google Maps y en las búsquedas de Google cuando alguien busca tu rubro en tu zona. Fundamental para negocios locales y con local físico.",
+                "para_quien": "Para negocios con local físico o que atienden zona específica",
+                "precio": "100% gratis",
+                "link": "https://business.google.com",
+                "color": "#22c55e"
+            },
+        ]
+
+        # Filtro por categoría
+        categorias = ["Todas"] + list(set(h["categoria"] for h in herramientas_afiliados))
+        cat_sel = st.selectbox("Filtrar por categoría:", categorias, key="cat_afil")
+
+        herramientas_filtradas = herramientas_afiliados if cat_sel == "Todas" else [h for h in herramientas_afiliados if h["categoria"] == cat_sel]
+
+        for herr in herramientas_filtradas:
+            st.markdown(f"""
+            <div class="card" style="border-color:rgba({','.join(str(int(herr['color'].lstrip('#')[i:i+2], 16)) for i in (0,2,4))},.4);margin-bottom:16px">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                    <span style="font-size:28px">{herr['emoji']}</span>
+                    <div>
+                        <b style="font-size:18px;color:#f8fafc">{herr['nombre']}</b>
+                        <span style="background:rgba(148,163,184,.2);padding:2px 10px;border-radius:10px;font-size:12px;margin-left:8px;color:#94a3b8">{herr['categoria']}</span>
+                    </div>
+                </div>
+                <p style="color:#cbd5e1;font-size:14px;margin-bottom:8px">{herr['descripcion']}</p>
+                <p style="color:#94a3b8;font-size:13px;margin-bottom:4px">✅ <b>Para quién:</b> {herr['para_quien']}</p>
+                <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">💰 <b>Precio:</b> {herr['precio']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+            st.link_button(f"🔗 Ir a {herr['nombre']}", herr['link'], use_container_width=False)
+            st.write("")
+
+        st.divider()
+        st.markdown('<div class="card"><p class="small-text">💡 <b>¿Usás alguna de estas herramientas?</b> Contale al mentor de negocios cuál usás y te ayuda a sacarle el máximo provecho.</p></div>', unsafe_allow_html=True)
 
