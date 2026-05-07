@@ -790,8 +790,8 @@ with st.expander("⚙️ Configuración y perfil",expanded=False):
 # ─────────────────────────────────────────
 # TABS
 # ─────────────────────────────────────────
-tab_mentor,tab_english,tab_progreso,tab_desafios,tab_premium,tab_ranking,tab_feedback=st.tabs([
-    "🧠 Mentor","📚 Aprender Inglés","📈 Progreso","🔥 Desafíos","💎 Premium","🏆 Ranking","💬 Feedback"
+tab_mentor,tab_english,tab_mate,tab_progreso,tab_desafios,tab_premium,tab_ranking,tab_feedback=st.tabs([
+    "🧠 Mentor","📚 Aprender Inglés","🔢 Aprender Matemáticas","📈 Progreso","🔥 Desafíos","💎 Premium","🏆 Ranking","💬 Feedback"
 ])
 
 # ════════════════════════════════════════
@@ -1178,3 +1178,588 @@ with tab_feedback:
     if user["feedback"]:
         st.markdown("### Feedback guardado")
         st.dataframe(pd.DataFrame(user["feedback"]),use_container_width=True)
+
+# ════════════════════════════════════════
+# LECCIONES DE MATEMÁTICAS
+# ════════════════════════════════════════
+
+LECCIONES_MATE = {
+    "Básico": [
+        {"id":"m1","titulo":"Números y operaciones básicas","descripcion":"Suma, resta, multiplicación y división","xp":20,
+         "contenido":"""**Números naturales:** 1, 2, 3, 4, 5... son los que usamos para contar.
+
+**Las 4 operaciones:**
+- Suma (+): 5 + 3 = 8 → Juntás cantidades
+- Resta (-): 10 - 4 = 6 → Quitás cantidades
+- Multiplicación (×): 4 × 3 = 12 → Suma repetida (4 veces el 3)
+- División (÷): 12 ÷ 4 = 3 → Repartís en partes iguales
+
+**En el negocio:**
+- Vendiste 5 remeras a $2000 cada una → 5 × 2000 = $10.000
+- Tenías $50.000 y gastaste $18.000 → 50.000 - 18.000 = $32.000
+- Compraste 24 productos para 4 locales → 24 ÷ 4 = 6 por local
+
+**Orden de operaciones (PEMDAS):**
+Primero: paréntesis → potencias → × y ÷ → + y -
+Ejemplo: 2 + 3 × 4 = 2 + 12 = 14 (NO 20)
+
+📝 **Ejercicio:** Si vendés 8 productos a $1.500 cada uno y pagaste $7.000 de costo, ¿cuánto ganás?""",
+         "quiz":[
+             {"pregunta":"¿Cuánto es 15 × 4?","opciones":["54","60","45","70"],"correcta":1},
+             {"pregunta":"Vendiste 6 productos a $500 cada uno. ¿Cuánto juntaste?","opciones":["$2.500","$3.000","$3.500","$2.000"],"correcta":1},
+             {"pregunta":"¿Cuánto es 100 ÷ 5?","opciones":["15","25","20","30"],"correcta":2},
+             {"pregunta":"2 + 3 × 4 es igual a:","opciones":["20","14","18","12"],"correcta":1},
+             {"pregunta":"Tenías $80.000 y gastaste $35.000. ¿Cuánto te queda?","opciones":["$55.000","$40.000","$45.000","$50.000"],"correcta":2},
+         ]},
+        {"id":"m2","titulo":"Porcentajes","descripcion":"El % más útil para cualquier negocio","xp":25,
+         "contenido":"""El **porcentaje** es una parte de 100. Es lo más usado en negocios.
+
+**¿Cómo calcular un porcentaje?**
+Fórmula: (porcentaje ÷ 100) × número
+Ejemplo: 20% de $5.000 = (20 ÷ 100) × 5.000 = 0.20 × 5.000 = $1.000
+
+**Casos más comunes:**
+
+Descuento: Precio original - (% descuento × precio)
+→ Remera de $3.000 con 30% off = 3.000 - 900 = $2.100
+
+Aumento de precio: Precio original × (1 + % aumento)
+→ Producto de $1.000 con 15% de aumento = 1.000 × 1.15 = $1.150
+
+IVA (21%): Precio sin IVA × 1.21
+→ Producto de $1.000 + IVA = $1.210
+
+**Calcular qué % representa algo:**
+Fórmula: (parte ÷ total) × 100
+→ Ganaste $300 sobre una venta de $1.500 = (300 ÷ 1500) × 100 = 20%
+
+📝 **Ejercicio:** Tenés un producto que costó $2.000 y lo vendés a $3.000. ¿Qué porcentaje de ganancia tenés?""",
+         "quiz":[
+             {"pregunta":"¿Cuánto es el 25% de $4.000?","opciones":["$800","$1.000","$1.200","$900"],"correcta":1},
+             {"pregunta":"Un producto de $5.000 tiene 20% de descuento. ¿Cuánto pagás?","opciones":["$3.500","$4.500","$4.000","$3.000"],"correcta":2},
+             {"pregunta":"Si comprás a $1.000 y vendés a $1.500, ¿qué % ganás?","opciones":["40%","60%","50%","45%"],"correcta":2},
+             {"pregunta":"¿Cuánto es el 10% de $7.500?","opciones":["$650","$750","$700","$800"],"correcta":1},
+             {"pregunta":"Un producto sin IVA cuesta $2.000. Con IVA del 21% cuesta:","opciones":["$2.100","$2.420","$2.210","$2.300"],"correcta":1},
+         ]},
+        {"id":"m3","titulo":"Fracciones y decimales","descripcion":"Mitades, tercios, cuartos y números con coma","xp":20,
+         "contenido":"""**Fracciones:** representan partes de un todo.
+- 1/2 = la mitad → 0.5
+- 1/4 = un cuarto → 0.25
+- 3/4 = tres cuartos → 0.75
+- 1/3 = un tercio → 0.333...
+
+**Decimales:** números con coma (o punto)
+- 0.5 = 5/10 = 50%
+- 0.25 = 25/100 = 25%
+- 1.5 = uno y medio
+
+**Operar con decimales:**
+- 2.5 + 1.3 = 3.8
+- 4.0 - 1.7 = 2.3
+- 3.5 × 2 = 7.0
+- 9.0 ÷ 4 = 2.25
+
+**En el negocio:**
+- Vendiste media docena de algo → 6 × 0.5 = 3 unidades
+- Tu ganancia fue 1.5 veces el costo → costo × 1.5
+- Repartís ganancias en 3 → dividís por 3
+
+📝 **Ejercicio:** Si tu ganancia por producto es $750 y vendés 8 productos, ¿cuánto ganás en total?""",
+         "quiz":[
+             {"pregunta":"¿Cuánto es 1/4 en decimal?","opciones":["0.4","0.14","0.25","0.50"],"correcta":2},
+             {"pregunta":"¿Cuánto es 2.5 × 4?","opciones":["8","9","10","7"],"correcta":2},
+             {"pregunta":"3/4 equivale a qué porcentaje?","opciones":["34%","73%","70%","75%"],"correcta":3},
+             {"pregunta":"¿Cuánto es 7.5 ÷ 3?","opciones":["2","2.5","3","2.25"],"correcta":1},
+             {"pregunta":"Si tenés $1.000 y gastás la mitad, ¿cuánto te queda?","opciones":["$400","$600","$500","$450"],"correcta":2},
+         ]},
+        {"id":"m4","titulo":"Proporciones y regla de tres","descripcion":"Si X entonces Y, ¿y si tengo más?","xp":25,
+         "contenido":"""La **regla de tres** sirve para calcular cantidades proporcionales.
+
+**Fórmula directa:**
+Si A → B, entonces C → X
+X = (C × B) ÷ A
+
+**Ejemplo directo:**
+Si 5 productos cuestan $10.000, ¿cuánto cuestan 8?
+X = (8 × 10.000) ÷ 5 = 80.000 ÷ 5 = $16.000
+
+**Ejemplo inverso (relación contraria):**
+Si 4 personas terminan un trabajo en 6 días, ¿cuánto tardan 3 personas?
+X = (4 × 6) ÷ 3 = 24 ÷ 3 = 8 días
+
+**En el negocio:**
+Si con $50.000 comprás 25 unidades, ¿cuántas comprás con $80.000?
+X = (80.000 × 25) ÷ 50.000 = 40 unidades
+
+Si 1 vendedor hace 20 ventas por día, ¿cuántas hacen 3 vendedores?
+X = 3 × 20 = 60 ventas
+
+📝 **Ejercicio:** Si 10 productos te generan $15.000 de ganancia, ¿cuánto generan 35 productos?""",
+         "quiz":[
+             {"pregunta":"Si 3 productos cuestan $6.000, ¿cuánto cuestan 7?","opciones":["$12.000","$14.000","$13.000","$15.000"],"correcta":1},
+             {"pregunta":"Si 1 empleado hace 15 cajas por hora, ¿cuántas hacen 4 empleados?","opciones":["45","50","60","55"],"correcta":2},
+             {"pregunta":"Si con $20.000 comprás 10 unidades, ¿cuántas comprás con $50.000?","opciones":["20","25","30","22"],"correcta":1},
+             {"pregunta":"Si 5 trabajadores terminan en 8 días, ¿cuánto tardan 10 trabajadores?","opciones":["4 días","6 días","3 días","5 días"],"correcta":0},
+             {"pregunta":"Si 4 productos generan $2.000 de ganancia, ¿cuánto generan 10 productos?","opciones":["$4.000","$5.000","$6.000","$4.500"],"correcta":1},
+         ]},
+    ],
+    "Intermedio": [
+        {"id":"m5","titulo":"Margen de ganancia","descripcion":"Cómo calcular cuánto ganás realmente","xp":35,
+         "contenido":"""El **margen de ganancia** es fundamental para cualquier negocio.
+
+**Ganancia bruta:**
+Ganancia = Precio de venta - Costo
+Ejemplo: Vendés a $5.000, costó $3.000 → Ganancia = $2.000
+
+**Margen de ganancia (%):**
+Margen = (Ganancia ÷ Precio de venta) × 100
+Ejemplo: (2.000 ÷ 5.000) × 100 = 40%
+
+**Markup (% sobre el costo):**
+Markup = (Ganancia ÷ Costo) × 100
+Ejemplo: (2.000 ÷ 3.000) × 100 = 66.7%
+
+**¿Cuál usar?**
+- Margen → para saber qué % de lo que vendés es ganancia
+- Markup → para saber cuánto le sumás al costo
+
+**Fijar precio desde el margen:**
+Si querés 40% de margen y el costo es $3.000:
+Precio = Costo ÷ (1 - margen decimal) = 3.000 ÷ 0.60 = $5.000
+
+**Fijar precio desde el markup:**
+Si querés 50% de markup sobre costo de $3.000:
+Precio = 3.000 × 1.50 = $4.500
+
+📝 **Ejercicio:** Un producto te cuesta $1.800. ¿A qué precio lo vendés para tener un margen del 40%?""",
+         "quiz":[
+             {"pregunta":"Comprás a $2.000 y vendés a $3.000. ¿Cuál es tu margen?","opciones":["33%","40%","50%","45%"],"correcta":0},
+             {"pregunta":"Si el costo es $5.000 y querés 50% de markup, ¿a qué precio vendés?","opciones":["$7.000","$7.500","$8.000","$6.500"],"correcta":1},
+             {"pregunta":"Ganancia = $800, Precio de venta = $2.000. ¿Cuál es el margen?","opciones":["35%","40%","45%","30%"],"correcta":1},
+             {"pregunta":"¿Cuál es la diferencia entre margen y markup?","opciones":["Son lo mismo","Margen se calcula sobre el precio, markup sobre el costo","Markup se calcula sobre el precio, margen sobre el costo","Ninguna"],"correcta":1},
+             {"pregunta":"Costo $3.000, margen deseado 25%. ¿Cuál es el precio?","opciones":["$3.750","$4.000","$3.800","$4.200"],"correcta":1},
+         ]},
+        {"id":"m6","titulo":"Punto de equilibrio","descripcion":"¿Cuánto tenés que vender para no perder?","xp":35,
+         "contenido":"""El **punto de equilibrio** es cuando tus ingresos igualan tus costos — ni ganás ni perdés.
+
+**Tipos de costos:**
+- Costos fijos: alquiler, sueldos, servicios → no cambian con las ventas
+- Costos variables: materia prima, empaques → cambian con la producción
+
+**Fórmula del punto de equilibrio (en unidades):**
+PE = Costos Fijos ÷ (Precio de venta - Costo variable por unidad)
+
+**Ejemplo:**
+Costos fijos mensuales: $50.000 (alquiler + servicios)
+Precio de venta por producto: $5.000
+Costo variable por producto: $3.000
+Margen de contribución: 5.000 - 3.000 = $2.000
+
+PE = 50.000 ÷ 2.000 = 25 unidades
+
+→ Necesitás vender 25 productos por mes para cubrir todos los costos.
+
+**En pesos:**
+PE en pesos = PE unidades × Precio de venta = 25 × 5.000 = $125.000
+
+**¿Para qué sirve?**
+Para saber cuál es tu meta mínima de ventas cada mes.
+
+📝 **Ejercicio:** Tus costos fijos son $80.000. Vendés a $4.000 y el costo variable es $2.500. ¿Cuántas unidades necesitás vender?""",
+         "quiz":[
+             {"pregunta":"¿Qué es el punto de equilibrio?","opciones":["Cuando ganás el máximo","Cuando ingresos = costos","Cuando vendés la mitad","Cuando cubrís solo costos variables"],"correcta":1},
+             {"pregunta":"Costos fijos $30.000, precio $3.000, costo variable $1.500. ¿Cuál es el PE?","opciones":["15 unidades","20 unidades","25 unidades","18 unidades"],"correcta":1},
+             {"pregunta":"¿Cuál es un costo fijo?","opciones":["Materia prima","Empaques","Alquiler","Comisiones de vendedores"],"correcta":2},
+             {"pregunta":"Si el PE son 40 unidades y vendés 50, ¿qué significa?","opciones":["Estás perdiendo","Estás en equilibrio","Estás ganando","No se puede saber"],"correcta":2},
+             {"pregunta":"El margen de contribución es:","opciones":["Precio - Costo fijo","Precio - Costo variable","Ganancia total","Costo variable - Precio"],"correcta":1},
+         ]},
+        {"id":"m7","titulo":"Estadística básica","descripcion":"Promedio, mediana y datos para decidir mejor","xp":30,
+         "contenido":"""La estadística te ayuda a entender tus números de negocio.
+
+**Promedio (media aritmética):**
+Promedio = Suma de todos los valores ÷ Cantidad de valores
+Ventas de la semana: 10, 15, 8, 20, 12 → Suma = 65 ÷ 5 = 13 ventas/día
+
+**Mediana:**
+El valor del medio cuando los datos están ordenados.
+Datos: 8, 10, 12, 15, 20 → Mediana = 12
+Si hay cantidad par: promedio de los dos del medio.
+
+**Moda:**
+El valor que más se repite.
+Ventas: 5, 8, 8, 10, 12, 8 → Moda = 8
+
+**¿Cuándo usar cada uno?**
+- Promedio → rendimiento general
+- Mediana → cuando hay valores muy extremos que distorsionan
+- Moda → el producto más vendido, la hora pico, etc.
+
+**En el negocio:**
+Promedio de ventas diarias → meta diaria
+Mediana de precios → precio más representativo
+Moda de productos vendidos → tu estrella
+
+📝 **Ejercicio:** Tus ventas esta semana fueron: $15.000, $22.000, $8.000, $18.000, $12.000, $25.000, $20.000. ¿Cuál es el promedio diario?""",
+         "quiz":[
+             {"pregunta":"Ventas: 5, 10, 15, 20, 25. ¿Cuál es el promedio?","opciones":["13","14","15","16"],"correcta":2},
+             {"pregunta":"Datos: 3, 7, 9, 12, 18. ¿Cuál es la mediana?","opciones":["7","9","12","10"],"correcta":1},
+             {"pregunta":"Ventas: 4, 6, 6, 8, 6, 10. ¿Cuál es la moda?","opciones":["4","8","6","10"],"correcta":2},
+             {"pregunta":"¿Cuándo conviene usar la mediana en lugar del promedio?","opciones":["Siempre","Cuando hay valores extremos que distorsionan","Cuando todos los datos son iguales","Nunca"],"correcta":1},
+             {"pregunta":"Si vendés 0, 0, 0, 0, 100 productos, el promedio es 20. ¿Es representativo?","opciones":["Sí, siempre","No, la mediana (0) sería más representativa","Sí, el promedio siempre es correcto","No importa"],"correcta":1},
+         ]},
+    ],
+    "Negocios": [
+        {"id":"mn1","titulo":"Flujo de caja","descripcion":"Controlá cuánto entra y cuánto sale","xp":40,
+         "contenido":"""El **flujo de caja** (cash flow) registra todo el dinero que entra y sale de tu negocio.
+
+**Fórmula:**
+Flujo de caja = Ingresos - Egresos
+
+**Ingresos:** todo lo que entra
+- Ventas en efectivo
+- Cobros de deudas
+- Préstamos recibidos
+
+**Egresos:** todo lo que sale
+- Compra de mercadería
+- Alquiler, servicios
+- Sueldos
+- Impuestos
+
+**Ejemplo mensual:**
+Ingresos: $200.000 (ventas) + $30.000 (cobro deuda) = $230.000
+Egresos: $100.000 (mercadería) + $40.000 (alquiler) + $30.000 (sueldos) = $170.000
+Flujo de caja = $230.000 - $170.000 = +$60.000 ✅
+
+Si el resultado es negativo → estás gastando más de lo que entra 🚨
+
+**Flujo de caja acumulado:**
+Suma mes a mes para ver la tendencia del negocio.
+
+📝 **Ejercicio:** En enero vendiste $150.000, pagaste $80.000 de costos fijos y $40.000 de mercadería. ¿Cuál es tu flujo de caja?""",
+         "quiz":[
+             {"pregunta":"¿Qué es el flujo de caja?","opciones":["Las ganancias del negocio","La diferencia entre ingresos y egresos","El dinero en la caja registradora","El capital del negocio"],"correcta":1},
+             {"pregunta":"Ingresos $300.000, egresos $250.000. ¿Cuál es el flujo de caja?","opciones":["$50.000","$30.000","$40.000","$60.000"],"correcta":0},
+             {"pregunta":"Un flujo de caja negativo significa:","opciones":["El negocio está creciendo","Estás ganando mucho","Gastás más de lo que entra","El negocio está en equilibrio"],"correcta":2},
+             {"pregunta":"¿Cuál de estos es un egreso?","opciones":["Venta en efectivo","Cobro de deuda","Pago de alquiler","Préstamo recibido"],"correcta":2},
+             {"pregunta":"¿Para qué sirve el flujo de caja acumulado?","opciones":["Para saber el precio de venta","Para ver la tendencia del negocio mes a mes","Para calcular el margen","Para fijar sueldos"],"correcta":1},
+         ]},
+        {"id":"mn2","titulo":"Rentabilidad y ROI","descripcion":"¿Vale la pena la inversión?","xp":45,
+         "contenido":"""El **ROI** (Return on Investment) mide qué tan rentable fue una inversión.
+
+**Fórmula del ROI:**
+ROI = ((Ganancia - Inversión) ÷ Inversión) × 100
+
+**Ejemplo:**
+Invertiste $50.000 en mercadería y la vendiste por $80.000
+Ganancia = 80.000 - 50.000 = $30.000
+ROI = (30.000 ÷ 50.000) × 100 = 60%
+
+→ Por cada $100 que invertiste, ganaste $60. ¡Muy bueno!
+
+**¿Qué ROI es bueno?**
+- Menos de 10% → bajo
+- 10% - 30% → aceptable
+- 30% - 50% → bueno
+- Más de 50% → excelente
+
+**ROI en publicidad:**
+Gastaste $5.000 en publicidad y generaste $20.000 en ventas adicionales
+ROI = ((20.000 - 5.000) ÷ 5.000) × 100 = 300%
+
+→ Por cada $100 invertidos en publicidad, ganaste $300.
+
+**Período de recupero:**
+¿En cuánto tiempo recuperás la inversión?
+Período = Inversión ÷ Ganancia mensual
+
+📝 **Ejercicio:** Invertiste $100.000 en una mejora del local y tus ventas aumentaron $20.000 por mes. ¿En cuántos meses recuperás la inversión?""",
+         "quiz":[
+             {"pregunta":"Invertiste $20.000 y ganaste $30.000. ¿Cuál es el ROI?","opciones":["40%","50%","60%","45%"],"correcta":1},
+             {"pregunta":"Un ROI de 80% es:","opciones":["Bajo","Aceptable","Bueno","Excelente"],"correcta":3},
+             {"pregunta":"Si gastaste $10.000 en publicidad y generaste $25.000 adicionales, el ROI es:","opciones":["100%","150%","200%","250%"],"correcta":1},
+             {"pregunta":"¿Para qué sirve el período de recupero?","opciones":["Para calcular el margen","Para saber cuándo recuperás la inversión","Para fijar precios","Para calcular el ROI"],"correcta":1},
+             {"pregunta":"Invertiste $50.000 y ganás $10.000 por mes. ¿En cuántos meses recuperás?","opciones":["3 meses","4 meses","5 meses","6 meses"],"correcta":2},
+         ]},
+        {"id":"mn3","titulo":"Proyecciones de ventas","descripcion":"Cómo proyectar el futuro de tu negocio","xp":40,
+         "contenido":"""Las **proyecciones** te ayudan a planificar y anticipar el futuro del negocio.
+
+**Proyección simple (crecimiento fijo):**
+Si vendés $100.000 este mes y crecés 10% mensual:
+Mes 1: $100.000
+Mes 2: 100.000 × 1.10 = $110.000
+Mes 3: 110.000 × 1.10 = $121.000
+Mes 4: 121.000 × 1.10 = $133.100
+
+**Proyección anual:**
+Ventas anuales = Ventas mensuales promedio × 12
+Si vendés $150.000/mes → $150.000 × 12 = $1.800.000 anuales
+
+**Meta regresiva (de atrás para adelante):**
+Si querés ganar $500.000 en el año y tu margen es 40%:
+Ventas necesarias = 500.000 ÷ 0.40 = $1.250.000 anuales
+Por mes = 1.250.000 ÷ 12 = $104.167/mes
+
+**Escenarios:**
+Siempre hacé 3 proyecciones:
+- Pesimista: -20% de lo esperado
+- Normal: lo que esperás
+- Optimista: +20% de lo esperado
+
+📝 **Ejercicio:** Querés ganar $200.000 netos en 6 meses. Tu margen es del 30%. ¿Cuánto necesitás vender por mes?""",
+         "quiz":[
+             {"pregunta":"Si vendés $80.000 y crecés 10% mensual, ¿cuánto vendés el mes siguiente?","opciones":["$85.000","$88.000","$90.000","$82.000"],"correcta":1},
+             {"pregunta":"Ventas mensuales $200.000. ¿Cuánto proyectás en el año?","opciones":["$1.800.000","$2.000.000","$2.400.000","$2.200.000"],"correcta":2},
+             {"pregunta":"Querés ganar $600.000 con un margen del 25%. ¿Cuánto necesitás vender?","opciones":["$2.000.000","$2.400.000","$1.800.000","$2.200.000"],"correcta":1},
+             {"pregunta":"¿Por qué conviene hacer 3 escenarios (pesimista, normal, optimista)?","opciones":["Para confundirse más","Para estar preparado para diferentes resultados","Porque es obligatorio","Para impresionar a los inversores"],"correcta":1},
+             {"pregunta":"La 'meta regresiva' sirve para:","opciones":["Calcular pérdidas","Partir de la ganancia deseada y calcular las ventas necesarias","Proyectar el pasado","Calcular el ROI"],"correcta":1},
+         ]},
+    ],
+}
+
+def system_mate(user, leccion=None, modo="chat"):
+    nivel = user.get("mate_nivel", "Básico")
+    loks = len(user.get("mate_lecciones_completadas", []))
+    lec = f"\nLección actual: {leccion}" if leccion else ""
+    modo_extra = ""
+    if modo == "calculadora":
+        modo_extra = "\n\nESTÁS EN MODO CALCULADORA. El usuario te da un problema numérico de su negocio. Vos: 1) Identificás qué fórmula usar 2) Mostrás el cálculo paso a paso 3) Das el resultado claro 4) Explicás qué significa para su negocio."
+    return f"""Sos Bruno, el profesor de matemáticas de AV MentorAI. Motivador, con ejemplos de la vida real, explicás todo con situaciones del negocio y la vida cotidiana.
+Estudiante: {user['nombre']} | Nivel: {nivel} | Lecciones completadas: {loks}{lec}
+Explicás en español simple. Usás ejemplos de negocios, precios, ventas, ganancias, productos.
+Nunca usás jerga matemática innecesaria. Siempre terminás con "¿Lo entendiste? ¿Querés que practiquemos más?" 🔢
+Frases tuyas: "Los números no mienten, y tampoco son difíciles si los entendés así:", "Esto en tu negocio significa:", "¡Muy bien! Eso es exactamente correcto 💪"{modo_extra}"""
+
+# ════════════════════════════════════════
+# TAB MATEMÁTICAS
+# ════════════════════════════════════════
+with tab_mate:
+    st.markdown('<div class="english-card"><h2>🔢 Aprender Matemáticas</h2><p class="small-text">Matemáticas desde cero + calculadora de negocios con Bruno, tu profesor con IA.</p></div>', unsafe_allow_html=True)
+
+    # Inicializar datos de mate en usuario si no existen
+    if "mate_nivel" not in user: user["mate_nivel"] = "Básico"
+    if "mate_lecciones_completadas" not in user: user["mate_lecciones_completadas"] = []
+    if "mate_messages" not in user: user["mate_messages"] = []
+
+    mate_subtabs = st.tabs(["📖 Lecciones", "🧮 Calculadora", "💬 Chat con Bruno"])
+
+    # ── LECCIONES DE MATEMÁTICAS ──
+    with mate_subtabs[0]:
+        niv_mate = st.selectbox("Tu nivel de matemáticas:", ["Básico", "Intermedio", "Negocios"],
+            index=["Básico", "Intermedio", "Negocios"].index(user.get("mate_nivel", "Básico")),
+            key="sel_mate_nivel")
+        if niv_mate != user.get("mate_nivel"):
+            user["mate_nivel"] = niv_mate; guardar_usuario(user)
+
+        mate_loks_list = user.get("mate_lecciones_completadas", [])
+        lecs_mate_niv = LECCIONES_MATE.get(niv_mate, [])
+        total_mate = len(lecs_mate_niv)
+        comp_mate = sum(1 for l in lecs_mate_niv if l["id"] in mate_loks_list)
+        if total_mate > 0:
+            st.progress(comp_mate / total_mate)
+            st.caption(f"{comp_mate}/{total_mate} lecciones completadas en nivel {niv_mate}")
+
+        for lec in lecs_mate_niv:
+            done = lec["id"] in mate_loks_list
+            icono = "✅" if done else "📖"
+            cl2, cb2 = st.columns([4, 1])
+            with cl2:
+                st.markdown(f'<div class="{"lesson-card-done" if done else "lesson-card"}"><b>{icono} {lec["titulo"]}</b><br><span class="small-text">{lec["descripcion"]}</span> <span style="color:#facc15;font-size:12px;font-weight:700">+{lec["xp"]} XP</span></div>', unsafe_allow_html=True)
+            with cb2:
+                if st.button("Repasar" if done else "Ver", key=f"mate_{lec['id']}"):
+                    st.session_state.mate_leccion_sel = lec["id"]; st.rerun()
+
+        # Lección seleccionada
+        mate_lsel = st.session_state.get("mate_leccion_sel", None)
+        if mate_lsel:
+            lobj = next((l for l in lecs_mate_niv if l["id"] == mate_lsel), None)
+            if lobj:
+                st.divider()
+                st.markdown(f"## 📖 {lobj['titulo']}")
+                st.markdown(f'<div class="lesson-content">{lobj["contenido"]}</div>', unsafe_allow_html=True)
+
+                # Quiz
+                st.markdown("### 🧠 Quiz de la lección")
+                st.caption("Respondé las preguntas para completar la lección (necesitás 80%).")
+                quiz_key = f"mate_quiz_{lobj['id']}"
+                if quiz_key not in st.session_state: st.session_state[quiz_key] = {}
+                respuestas = st.session_state[quiz_key]
+                for i, q in enumerate(lobj.get("quiz", [])):
+                    st.markdown(f'<div class="quiz-card"><b>Pregunta {i+1}:</b> {q["pregunta"]}</div>', unsafe_allow_html=True)
+                    sel = st.radio("", q["opciones"], key=f"mq_{lobj['id']}_{i}", index=None, label_visibility="collapsed")
+                    if sel is not None: respuestas[i] = q["opciones"].index(sel)
+
+                if len(respuestas) == len(lobj.get("quiz", [])):
+                    correctas = sum(1 for i, q in enumerate(lobj["quiz"]) if respuestas.get(i) == q["correcta"])
+                    pct = int(correctas / len(lobj["quiz"]) * 100)
+                    if pct >= 80:
+                        st.success(f"✅ {correctas}/{len(lobj['quiz'])} correctas ({pct}%). ¡Excelente Bruno estaría orgulloso! 💪")
+                        if lobj["id"] not in mate_loks_list:
+                            if st.button(f"🏆 Completar lección (+{lobj['xp']} XP)", key=f"comp_mate_{lobj['id']}"):
+                                user["mate_lecciones_completadas"].append(lobj["id"])
+                                sumar_xp(lobj["xp"]); guardar_usuario(user)
+                                st.success(f"¡Lección completada! +{lobj['xp']} XP 🎉")
+                                st.session_state.mate_leccion_sel = None; st.rerun()
+                        else:
+                            st.info("✅ Ya completaste esta lección.")
+                    else:
+                        st.warning(f"⚠️ {correctas}/{len(lobj['quiz'])} correctas ({pct}%). Necesitás 80% para completarla.")
+
+                if st.button("❌ Cerrar", key=f"cerrar_mate_{mate_lsel}"):
+                    st.session_state.mate_leccion_sel = None; st.rerun()
+
+        # Certificado de mate
+        st.divider()
+        st.markdown("### 🏆 Certificado de Matemáticas")
+        for nivel_cert, lecs_cert in LECCIONES_MATE.items():
+            total_c = len(lecs_cert)
+            loks_c = sum(1 for l in lecs_cert if l["id"] in user.get("mate_lecciones_completadas", []))
+            st.progress(loks_c / total_c if total_c > 0 else 0)
+            st.caption(f"Nivel {nivel_cert}: {loks_c}/{total_c}")
+            if loks_c == total_c:
+                st.success(f"✅ ¡Completaste el nivel {nivel_cert}!")
+                if st.button(f"📜 Certificado {nivel_cert}", key=f"cert_mate_{nivel_cert}"):
+                    pdf_buf = generar_certificado_pdf(user["nombre"], f"Matemáticas — {nivel_cert}", loks_c, hoy)
+                    st.download_button(f"⬇️ Descargar PDF", data=pdf_buf,
+                        file_name=f"certificado_mate_{nivel_cert.lower()}_{user['nombre'].lower().replace(' ','_')}.pdf",
+                        mime="application/pdf", key=f"dl_mate_{nivel_cert}")
+
+    # ── CALCULADORA DE NEGOCIOS ──
+    with mate_subtabs[1]:
+        st.markdown("### 🧮 Calculadora de negocios")
+        st.caption("Ingresá tus números y Bruno te explica el resultado paso a paso.")
+
+        calc_tipo = st.selectbox("¿Qué querés calcular?", [
+            "💰 Margen de ganancia",
+            "⚖️ Punto de equilibrio",
+            "📈 ROI de una inversión",
+            "🏷️ Precio de venta ideal",
+            "📊 Proyección de ventas",
+            "🔢 Problema personalizado"
+        ], key="calc_tipo")
+
+        if calc_tipo == "💰 Margen de ganancia":
+            costo = st.number_input("Costo del producto ($):", min_value=0.0, step=100.0, key="calc_costo")
+            precio = st.number_input("Precio de venta ($):", min_value=0.0, step=100.0, key="calc_precio")
+            if st.button("Calcular 🔢", key="btn_margen") and precio > 0:
+                ganancia = precio - costo
+                margen = (ganancia / precio) * 100
+                markup = (ganancia / costo) * 100 if costo > 0 else 0
+                st.success(f"**Ganancia:** ${ganancia:,.0f}")
+                st.success(f"**Margen:** {margen:.1f}%")
+                st.success(f"**Markup:** {markup:.1f}%")
+                prompt = f"Mi producto cuesta ${costo} y lo vendo a ${precio}. La ganancia es ${ganancia:.0f}, el margen es {margen:.1f}% y el markup es {markup:.1f}%. Explicame si esto está bien para mi negocio y qué me recomendás."
+                enviar_english(prompt, modo="calculadora", lista_msgs_key="mate_messages")
+
+        elif calc_tipo == "⚖️ Punto de equilibrio":
+            cf = st.number_input("Costos fijos mensuales ($):", min_value=0.0, step=1000.0, key="calc_cf")
+            pv = st.number_input("Precio de venta por unidad ($):", min_value=0.0, step=100.0, key="calc_pv")
+            cv = st.number_input("Costo variable por unidad ($):", min_value=0.0, step=100.0, key="calc_cv")
+            if st.button("Calcular 🔢", key="btn_pe") and pv > cv:
+                mc = pv - cv
+                pe = cf / mc
+                pe_pesos = pe * pv
+                st.success(f"**Punto de equilibrio:** {pe:.0f} unidades por mes")
+                st.success(f"**En pesos:** ${pe_pesos:,.0f} por mes")
+                prompt = f"Mis costos fijos son ${cf}, vendo a ${pv} y el costo variable es ${cv}. Mi punto de equilibrio es {pe:.0f} unidades (${pe_pesos:,.0f}). Explicame qué significa y si mi negocio está bien."
+                enviar_english(prompt, modo="calculadora", lista_msgs_key="mate_messages")
+
+        elif calc_tipo == "📈 ROI de una inversión":
+            inversion = st.number_input("Inversión realizada ($):", min_value=0.0, step=1000.0, key="calc_inv")
+            retorno = st.number_input("Retorno obtenido ($):", min_value=0.0, step=1000.0, key="calc_ret")
+            if st.button("Calcular 🔢", key="btn_roi") and inversion > 0:
+                ganancia_roi = retorno - inversion
+                roi = (ganancia_roi / inversion) * 100
+                st.success(f"**Ganancia neta:** ${ganancia_roi:,.0f}")
+                st.success(f"**ROI:** {roi:.1f}%")
+                if roi > 50: st.success("🔥 ¡Excelente ROI!")
+                elif roi > 20: st.info("👍 Buen ROI")
+                else: st.warning("⚠️ ROI bajo, revisá la estrategia")
+                prompt = f"Invertí ${inversion} y obtuve ${retorno}. Mi ganancia fue ${ganancia_roi:.0f} y el ROI es {roi:.1f}%. ¿Es bueno esto para mi negocio?"
+                enviar_english(prompt, modo="calculadora", lista_msgs_key="mate_messages")
+
+        elif calc_tipo == "🏷️ Precio de venta ideal":
+            costo_p = st.number_input("Costo del producto ($):", min_value=0.0, step=100.0, key="calc_costo_p")
+            margen_d = st.slider("Margen de ganancia deseado (%):", 5, 80, 40, key="calc_margen_d")
+            if st.button("Calcular 🔢", key="btn_precio") and costo_p > 0:
+                precio_ideal = costo_p / (1 - margen_d / 100)
+                ganancia_p = precio_ideal - costo_p
+                st.success(f"**Precio ideal:** ${precio_ideal:,.0f}")
+                st.success(f"**Ganancia por unidad:** ${ganancia_p:,.0f}")
+                prompt = f"Mi producto cuesta ${costo_p} y quiero un margen del {margen_d}%. El precio ideal es ${precio_ideal:.0f} con una ganancia de ${ganancia_p:.0f} por unidad. ¿Me das consejos para fijar este precio?"
+                enviar_english(prompt, modo="calculadora", lista_msgs_key="mate_messages")
+
+        elif calc_tipo == "📊 Proyección de ventas":
+            ventas_act = st.number_input("Ventas actuales mensuales ($):", min_value=0.0, step=1000.0, key="calc_vact")
+            crec = st.slider("Crecimiento mensual esperado (%):", 1, 50, 10, key="calc_crec")
+            meses = st.slider("Proyección en meses:", 1, 24, 6, key="calc_meses")
+            if st.button("Proyectar 🔢", key="btn_proy") and ventas_act > 0:
+                st.markdown("**Proyección mes a mes:**")
+                v = ventas_act
+                total_proy = 0
+                for i in range(1, meses + 1):
+                    v = v * (1 + crec / 100)
+                    total_proy += v
+                    st.write(f"Mes {i}: ${v:,.0f}")
+                st.success(f"**Total proyectado {meses} meses:** ${total_proy:,.0f}")
+
+        else:  # Problema personalizado
+            problema = st.text_area("Describí tu problema o cálculo:", placeholder="Ej: Compré 50 remeras a $1.500 cada una, las quiero vender con 45% de margen. ¿A qué precio las pongo?", height=100, key="calc_problema")
+            if st.button("Resolver con Bruno 🔢", key="btn_problema") and problema.strip():
+                enviar_english(problema, modo="calculadora", lista_msgs_key="mate_messages")
+
+        # Mostrar respuesta de Bruno
+        mate_msgs = user.get("mate_messages", [])
+        if mate_msgs:
+            ul_mate = obtener_ultima_respuesta(mate_msgs)
+            if ul_mate:
+                st.divider()
+                st.markdown("**Bruno dice:**")
+                st.markdown(f'<div class="chat-english" style="border-left-color:#22c55e"><div class="chat-name-english" style="color:#22c55e!important">🔢 Bruno — Profesor de Matemáticas</div><div class="chat-text">{ul_mate}</div></div>', unsafe_allow_html=True)
+
+    # ── CHAT CON BRUNO ──
+    with mate_subtabs[2]:
+        st.markdown("### 💬 Chat con Bruno, tu profesor de matemáticas")
+        st.caption("Preguntale cualquier duda, pedile ejercicios o que te explique algo con ejemplos de tu negocio.")
+
+        mate_msgs = user.get("mate_messages", [])
+        if not mate_msgs:
+            n = user['nombre'] or 'estudiante'
+            bv_mate = f"¡Hola {n}! 💪 Soy Bruno, tu profesor de matemáticas. Te prometo que con ejemplos reales de negocios, los números se vuelven simples. ¿Por dónde empezamos? ¿Querés aprender algo nuevo o tenés un cálculo para hacer?"
+            st.markdown(f'<div class="chat-english" style="border-left-color:#22c55e"><div class="chat-name-english" style="color:#22c55e!important">🔢 Bruno — Profesor de Matemáticas</div><div class="chat-text">{bv_mate}</div></div>', unsafe_allow_html=True)
+        else:
+            for m in mate_msgs[-20:]:
+                if m["role"] == "user":
+                    st.markdown(f'<div class="chat-user"><div class="chat-name">Vos</div><div class="chat-text">{m["content"]}</div></div>', unsafe_allow_html=True)
+                else:
+                    st.markdown(f'<div class="chat-english" style="border-left-color:#22c55e"><div class="chat-name-english" style="color:#22c55e!important">🔢 Bruno</div><div class="chat-text">{m["content"]}</div></div>', unsafe_allow_html=True)
+
+            ul_mate2 = obtener_ultima_respuesta(mate_msgs)
+            if ul_mate2 and st.button("🔊 Escuchar a Bruno", key="aud_mate"):
+                with st.spinner("..."): render_audio_player(ul_mate2)
+
+        b1, b2, b3 = st.columns(3)
+        bq_mate = None
+        with b1:
+            if st.button("% Porcentajes", key="bmate1"): bq_mate = "Explicame cómo calcular porcentajes con ejemplos de precios y descuentos."
+            if st.button("📊 Margen de ganancia", key="bmate2"): bq_mate = "¿Cómo calculo el margen de ganancia de un producto? Dame ejemplos."
+        with b2:
+            if st.button("⚖️ Punto de equilibrio", key="bmate3"): bq_mate = "Explicame qué es el punto de equilibrio y cómo calcularlo para mi negocio."
+            if st.button("📈 ROI", key="bmate4"): bq_mate = "¿Qué es el ROI y cómo sé si una inversión vale la pena?"
+        with b3:
+            if st.button("🎯 Dame un ejercicio", key="bmate5"): bq_mate = "Dame un ejercicio de matemáticas de negocios para practicar."
+            if st.button("🔢 Regla de tres", key="bmate6"): bq_mate = "Explicame la regla de tres con ejemplos de ventas y productos."
+
+        mate_input = st.chat_input("Preguntale a Bruno sobre matemáticas...")
+        if bq_mate: mate_input = bq_mate
+        if mate_input:
+            mate_lsel2 = st.session_state.get("mate_leccion_sel", None)
+            lec_ctx = None
+            if mate_lsel2:
+                lo2 = next((l for l in lecs_mate_niv if l["id"] == mate_lsel2), None)
+                if lo2: lec_ctx = lo2["titulo"]
+            enviar_english(mate_input, leccion=lec_ctx, modo="chat", lista_msgs_key="mate_messages")
+
+        if st.button("🗑️ Borrar chat de Bruno", key="borrar_mate"):
+            user["mate_messages"] = []; guardar_usuario(user); st.rerun()
+
