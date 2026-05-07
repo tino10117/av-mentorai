@@ -405,6 +405,18 @@ h1,h2,h3,h4,p,label,span{color:#f8fafc!important;}
 [data-testid="stAudioInput"] button{background:#1e293b!important;}
 [data-testid="stAudioInput"] *{background:#1e293b!important;color:#f8fafc!important;}
 [data-testid="stExpander"]{background:rgba(15,23,42,.88)!important;border:1px solid rgba(250,204,21,.25)!important;border-radius:16px!important;}
+
+/* SIDEBAR NAVIGATION */
+[data-testid="stSidebar"]{background:linear-gradient(180deg,#020617 0%,#0b1120 100%)!important;border-right:1px solid rgba(250,204,21,.2)!important;}
+[data-testid="stSidebar"] .stButton>button{
+    background:transparent!important;border:none!important;color:#cbd5e1!important;
+    font-size:15px!important;font-weight:600!important;text-align:left!important;
+    width:100%!important;padding:12px 16px!important;border-radius:12px!important;
+    margin-bottom:4px!important;transition:all .2s!important;
+}
+[data-testid="stSidebar"] .stButton>button:hover{background:rgba(250,204,21,.1)!important;color:#facc15!important;}
+.nav-active>button{background:rgba(250,204,21,.15)!important;color:#facc15!important;border-left:3px solid #facc15!important;}
+.nav-section{color:#64748b!important;font-size:11px!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:1px!important;padding:12px 16px 4px!important;}
 @media(max-width:768px){
     .av-logo{font-size:28px;}
     .chat-text{font-size:13px;}
@@ -888,45 +900,95 @@ st.markdown(f'''<div style="background:rgba(15,23,42,.88);border:1px solid rgba(
 st.write("")
 
 # Configuración
-with st.expander("⚙️ Configuración y perfil",expanded=False):
-    ca,cb=st.columns(2)
-    with ca:
-        st.markdown("**🔧 Modo del mentor**")
-        st.session_state.modo=st.selectbox("Modo:",["Mentor de Negocios","Entrenador de Ventas","Marketing LATAM","Disciplina y Hábitos","Ideas de Negocio","Simulación con Cliente Difícil","Planificador de Objetivos","Modo Empresario Exigente","Modo Mentor Millonario","Especialista Supermercados","Especialista E-commerce","Especialista Reventa","Especialista Restaurante","Especialista Inmobiliaria"],label_visibility="collapsed")
-        st.markdown("**🧠 Memoria**")
-        user["nombre"]=st.text_input("Nombre:",value=user["nombre"])
-        user["objetivo"]=st.text_area("Objetivo:",value=user["objetivo"])
-        user["negocio"]=st.text_input("Negocio:",value=user["negocio"])
-        user["tipo_negocio"]=st.text_input("Tipo:",value=user["tipo_negocio"])
-    with cb:
-        st.markdown("**📊 Panel empresario**")
-        user["meta_mensual"]=st.text_input("Meta mensual:",value=user["meta_mensual"])
-        user["ingresos_objetivo"]=st.number_input("Ingresos objetivo ($):",value=int(user["ingresos_objetivo"]),min_value=0)
-        user["habito_clave"]=st.text_input("Hábito clave:",value=user["habito_clave"])
-        st.markdown("**⚙️ Acciones**")
-        if st.button("💾 Guardar"): guardar_usuario(user); st.success("Guardado.")
-        if st.button("🧹 Borrar conversación"): st.session_state.confirmar_borrar=True
+# ── SIDEBAR NAVEGACIÓN ──
+with st.sidebar:
+    st.markdown(f"""
+    <div style="padding:16px 0 8px;text-align:center">
+        <div style="font-size:22px;font-weight:900;background:linear-gradient(90deg,#facc15,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">⚡ AV MentorAI</div>
+        <div style="font-size:11px;color:#64748b;margin-top:4px">{user['nombre']} · {user['plan']}</div>
+        <div style="font-size:11px;color:#facc15;margin-top:2px">⭐ {user['xp']} XP · 🔥 {plural_dias(user['racha'])}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.divider()
+
+    st.markdown('<p class="nav-section">APRENDIZAJE</p>', unsafe_allow_html=True)
+
+    nav_items = [
+        ("mentor",    "🧠 Mentor de Negocios"),
+        ("ingles",    "📚 Aprender Inglés"),
+        ("mate",      "🔢 Aprender Matemáticas"),
+    ]
+    for key, label in nav_items:
+        activo = st.session_state.pagina == key
+        if st.button(label, key=f"nav_{key}", use_container_width=True):
+            st.session_state.pagina = key
+            st.rerun()
+
+    st.markdown('<p class="nav-section">HERRAMIENTAS</p>', unsafe_allow_html=True)
+
+    nav_items2 = [
+        ("herramientas", "🛠️ Herramientas"),
+        ("progreso",     "📈 Progreso"),
+        ("desafios",     "🔥 Desafíos"),
+        ("premium",      "💎 Premium"),
+        ("ranking",      "🏆 Ranking"),
+        ("feedback",     "💬 Feedback"),
+    ]
+    for key, label in nav_items2:
+        if st.button(label, key=f"nav_{key}", use_container_width=True):
+            st.session_state.pagina = key
+            st.rerun()
+
+    st.divider()
+
+    st.markdown('<p class="nav-section">CONFIGURACIÓN</p>', unsafe_allow_html=True)
+
+    with st.expander("⚙️ Mi perfil", expanded=False):
+        user["nombre"]=st.text_input("Nombre:",value=user["nombre"],key="sb_nombre")
+        user["objetivo"]=st.text_area("Objetivo:",value=user["objetivo"],key="sb_obj",height=80)
+        user["negocio"]=st.text_input("Negocio:",value=user["negocio"],key="sb_neg")
+        user["meta_mensual"]=st.text_input("Meta mensual:",value=user["meta_mensual"],key="sb_meta")
+        user["ingresos_objetivo"]=st.number_input("Ingresos objetivo ($):",value=int(user["ingresos_objetivo"]),min_value=0,key="sb_ing")
+        user["habito_clave"]=st.text_input("Hábito clave:",value=user["habito_clave"],key="sb_hab")
+        st.session_state.modo=st.selectbox("Modo mentor:",["Mentor de Negocios","Entrenador de Ventas","Marketing LATAM","Disciplina y Hábitos","Ideas de Negocio","Simulación con Cliente Difícil","Planificador de Objetivos","Modo Empresario Exigente","Modo Mentor Millonario","Especialista Supermercados","Especialista E-commerce","Especialista Reventa","Especialista Restaurante","Especialista Inmobiliaria"],key="sb_modo")
+        if st.button("💾 Guardar",key="sb_guardar"): guardar_usuario(user); st.success("Guardado.")
+        if st.button("🧹 Borrar conversación",key="sb_borrar"): st.session_state.confirmar_borrar=True
         if st.session_state.get("confirmar_borrar",False):
-            st.warning("¿Seguro? Se borra todo el historial.")
+            st.warning("¿Seguro?")
             cs,cn=st.columns(2)
             with cs:
-                if st.button("✅ Sí"): user["messages"]=[]; guardar_usuario(user); st.session_state.confirmar_borrar=False; st.rerun()
+                if st.button("✅ Sí",key="sb_si"): user["messages"]=[]; guardar_usuario(user); st.session_state.confirmar_borrar=False; st.rerun()
             with cn:
-                if st.button("❌ No"): st.session_state.confirmar_borrar=False; st.rerun()
-        if st.button("🔁 Rehacer onboarding"): user["onboarding_completo"]=False; guardar_usuario(user); st.rerun()
-        if st.button("🚪 Cerrar sesión"): guardar_usuario(user); st.session_state.logged_in=False; st.rerun()
+                if st.button("❌ No",key="sb_no"): st.session_state.confirmar_borrar=False; st.rerun()
+        if st.button("🔁 Rehacer onboarding",key="sb_onb"): user["onboarding_completo"]=False; guardar_usuario(user); st.rerun()
+
+    if st.button("🚪 Cerrar sesión",key="sb_logout",use_container_width=True):
+        guardar_usuario(user); st.session_state.logged_in=False; st.rerun()
 
 # ─────────────────────────────────────────
 # TABS
 # ─────────────────────────────────────────
-tab_mentor,tab_english,tab_mate,tab_herramientas,tab_progreso,tab_desafios,tab_premium,tab_ranking,tab_feedback=st.tabs([
-    "🧠 Mentor","📚 Aprender Inglés","🔢 Aprender Matemáticas","🛠️ Herramientas","📈 Progreso","🔥 Desafíos","💎 Premium","🏆 Ranking","💬 Feedback"
-])
+pagina = st.session_state.get("pagina","mentor")
+
+# Crear variables para cada "tab" usando contenedores condicionales
+tab_mentor = None; tab_english = None; tab_mate = None; tab_herramientas = None
+tab_progreso = None; tab_desafios = None; tab_premium = None; tab_ranking = None; tab_feedback = None
+
+if pagina=="mentor": tab_mentor = st.container()
+elif pagina=="ingles": tab_english = st.container()
+elif pagina=="mate": tab_mate = st.container()
+elif pagina=="herramientas": tab_herramientas = st.container()
+elif pagina=="progreso": tab_progreso = st.container()
+elif pagina=="desafios": tab_desafios = st.container()
+elif pagina=="premium": tab_premium = st.container()
+elif pagina=="ranking": tab_ranking = st.container()
+elif pagina=="feedback": tab_feedback = st.container()
 
 # ════════════════════════════════════════
 # TAB MENTOR
 # ════════════════════════════════════════
-with tab_mentor:
+if tab_mentor is not None:
     if not user["messages"]:
         n=user['nombre'] or 'emprendedor'
         obj=f" Tu objetivo: {user['objetivo']}." if user["objetivo"] else ""
@@ -995,7 +1057,7 @@ with tab_mentor:
 # ════════════════════════════════════════
 # TAB INGLÉS
 # ════════════════════════════════════════
-with tab_english:
+if tab_english is not None:
     st.markdown('<div class="english-card"><h2>📚 Aprender Inglés</h2><p class="small-text">Lecciones offline + Quiz + Roleplay + Traductor + Diario + Certificado</p></div>',unsafe_allow_html=True)
 
     # Sub-navegación
@@ -1244,7 +1306,7 @@ with tab_english:
 # ════════════════════════════════════════
 # TAB PROGRESO
 # ════════════════════════════════════════
-with tab_progreso:
+if tab_progreso is not None:
     st.markdown("## 📈 Progreso")
     p1,p2,p3,p4,p5=st.columns(5)
     with p1: st.metric("⭐ XP total",user["xp"])
@@ -1272,7 +1334,7 @@ with tab_progreso:
 # ════════════════════════════════════════
 # TAB DESAFÍOS
 # ════════════════════════════════════════
-with tab_desafios:
+if tab_desafios is not None:
     st.markdown("## 🔥 Desafío diario")
     st.markdown(f'<div class="challenge-card"><h2>Tu misión de hoy</h2><h3>{desafio}</h3><p class="small-text">Completarlo suma XP y mejora tu racha.</p></div>',unsafe_allow_html=True)
     d1,d2=st.columns(2)
@@ -1285,7 +1347,7 @@ with tab_desafios:
 # ════════════════════════════════════════
 # TAB PREMIUM
 # ════════════════════════════════════════
-with tab_premium:
+if tab_premium is not None:
     st.markdown("## 💎 Planes")
     p1,p2,p3=st.columns(3)
     with p1:
@@ -1302,7 +1364,7 @@ with tab_premium:
 # ════════════════════════════════════════
 # TAB RANKING
 # ════════════════════════════════════════
-with tab_ranking:
+if tab_ranking is not None:
     st.markdown("## 🏆 Ranking")
     rk=[]
     for f in os.listdir(DATA_DIR):
@@ -1317,7 +1379,7 @@ with tab_ranking:
 # ════════════════════════════════════════
 # TAB FEEDBACK
 # ════════════════════════════════════════
-with tab_feedback:
+if tab_feedback is not None:
     st.markdown("## 💬 Feedback")
     cal=st.slider("¿Qué tan útil es AV MentorAI?",1,10,8)
     com=st.text_area("Comentario:",placeholder="Qué te gustó, qué mejorarías...")
@@ -1683,7 +1745,7 @@ Frases tuyas: "Los números no mienten, y tampoco son difíciles si los entendé
 # ════════════════════════════════════════
 # TAB MATEMÁTICAS
 # ════════════════════════════════════════
-with tab_mate:
+if tab_mate is not None:
     st.markdown('<div style="background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(16,185,129,.10));border:1px solid rgba(34,197,94,.35);border-radius:16px;padding:12px 16px;margin-bottom:12px"><span style="font-size:20px;font-weight:800;color:#22c55e">🔢 Aprender Matemáticas</span><br><span style="font-size:12px;color:#94a3b8">Lecciones · Quiz · Calculadora de negocios · Certificado</span></div>', unsafe_allow_html=True)
 
     # Inicializar datos de mate en usuario si no existen
@@ -1919,7 +1981,7 @@ with tab_mate:
 # ════════════════════════════════════════
 # TAB HERRAMIENTAS
 # ════════════════════════════════════════
-with tab_herramientas:
+if tab_herramientas is not None:
     st.markdown('<div class="hero-card"><h2>🛠️ Herramientas</h2><p class="small-text">Analizá tu competencia, generá contenido listo para publicar y descubrí herramientas para crecer.</p></div>', unsafe_allow_html=True)
 
     herr_tabs = st.tabs(["🔍 Analizar competencia", "✍️ Generar contenido", "🤝 Afiliados"])
