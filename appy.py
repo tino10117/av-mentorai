@@ -915,13 +915,13 @@ if not st.session_state.logged_in:
         <div style="background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.3);border-radius:12px;padding:10px 16px;text-align:center">
             <div style="font-size:20px;font-weight:800;color:#facc15">14</div><div style="font-size:11px;color:#94a3b8">Modos mentor</div></div>
         <div style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:12px;padding:10px 16px;text-align:center">
-            <div style="font-size:20px;font-weight:800;color:#a855f7">12</div><div style="font-size:11px;color:#94a3b8">Lecciones inglés</div></div>
+            <div style="font-size:20px;font-weight:800;color:#a855f7">22</div><div style="font-size:11px;color:#94a3b8">Lecciones</div></div>
         <div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:12px;padding:10px 16px;text-align:center">
-            <div style="font-size:20px;font-weight:800;color:#22c55e">10</div><div style="font-size:11px;color:#94a3b8">Lecciones mate</div></div>
+            <div style="font-size:20px;font-weight:800;color:#22c55e">6</div><div style="font-size:11px;color:#94a3b8">Herramientas IA</div></div>
         <div style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);border-radius:12px;padding:10px 16px;text-align:center">
             <div style="font-size:20px;font-weight:800;color:#38bdf8">8</div><div style="font-size:11px;color:#94a3b8">Roleplay</div></div>
         <div style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);border-radius:12px;padding:10px 16px;text-align:center">
-            <div style="font-size:20px;font-weight:800;color:#f97316">8</div><div style="font-size:11px;color:#94a3b8">Herramientas</div></div>
+            <div style="font-size:20px;font-weight:800;color:#f97316">🌐</div><div style="font-size:11px;color:#94a3b8">Con internet</div></div>
     </div>''', unsafe_allow_html=True)
 
     st.markdown("### ¿Qué tiene AV MentorAI?")
@@ -929,20 +929,26 @@ if not st.session_state.logged_in:
     with fa:
         st.markdown('''
         <div style="background:linear-gradient(135deg,rgba(250,204,21,.12),rgba(249,115,22,.08));border:1px solid rgba(250,204,21,.3);border-radius:16px;padding:14px;margin-bottom:10px">
-            <b style="color:#facc15">🧠 Mentor de Negocios</b><br><span style="color:#cbd5e1;font-size:12px">14 modos: ventas, marketing, e-commerce, supermercado y más. Analizá fotos de tu negocio.</span></div>
+            <b style="color:#facc15">🧠 Mentor de Negocios</b><br><span style="color:#cbd5e1;font-size:12px">14 modos: ventas, marketing, e-commerce, supermercado y más. Analizá fotos de tu negocio. 🌐 Con búsqueda en internet.</span></div>
         <div style="background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(99,102,241,.08));border:1px solid rgba(168,85,247,.3);border-radius:16px;padding:14px;margin-bottom:10px">
-            <b style="color:#a855f7">📚 Inglés con Alex</b><br><span style="color:#cbd5e1;font-size:12px">12 lecciones, quiz, roleplay, traductor, diario y certificado PDF.</span></div>
+            <b style="color:#a855f7">📚 Inglés con Alex</b><br><span style="color:#cbd5e1;font-size:12px">12 lecciones, quiz interactivo, roleplay en 8 situaciones reales, traductor, diario con corrección y certificado PDF.</span></div>
+        <div style="background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(16,185,129,.08));border:1px solid rgba(34,197,94,.3);border-radius:16px;padding:14px;margin-bottom:10px">
+            <b style="color:#22c55e">🔢 Matemáticas con Bruno</b><br><span style="color:#cbd5e1;font-size:12px">10 lecciones con quiz, calculadora de márgenes, ROI, punto de equilibrio y certificado PDF.</span></div>
         <div style="background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(99,102,241,.08));border:1px solid rgba(56,189,248,.3);border-radius:16px;padding:14px;margin-bottom:10px">
-            <b style="color:#38bdf8">🔍 Análisis de Competencia</b><br><span style="color:#cbd5e1;font-size:12px">Plan de 5 pasos para superar a cualquier competidor.</span></div>
+            <b style="color:#38bdf8">🔍 Análisis de Competencia</b><br><span style="color:#cbd5e1;font-size:12px">Plan de 5 pasos para superar a cualquier competidor con información real.</span></div>
         ''', unsafe_allow_html=True)
     with fb:
         st.markdown('''
-        <div style="background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(16,185,129,.08));border:1px solid rgba(34,197,94,.3);border-radius:16px;padding:14px;margin-bottom:10px">
-            <b style="color:#22c55e">🔢 Matemáticas con Bruno</b><br><span style="color:#cbd5e1;font-size:12px">10 lecciones + calculadora de márgenes, ROI y proyecciones.</span></div>
         <div style="background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(239,68,68,.08));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:14px;margin-bottom:10px">
-            <b style="color:#f97316">✍️ Generador de Contenido</b><br><span style="color:#cbd5e1;font-size:12px">Posts de Instagram, WhatsApp, Mercado Libre y TikTok listos para publicar.</span></div>
+            <b style="color:#f97316">✍️ Generador de Contenido</b><br><span style="color:#cbd5e1;font-size:12px">Posts de Instagram, WhatsApp, Mercado Libre y TikTok listos para copiar y publicar.</span></div>
+        <div style="background:linear-gradient(135deg,rgba(250,204,21,.12),rgba(249,115,22,.08));border:1px solid rgba(250,204,21,.3);border-radius:16px;padding:14px;margin-bottom:10px">
+            <b style="color:#facc15">📋 Plantillas descargables</b><br><span style="color:#cbd5e1;font-size:12px">Guión de ventas, pitch, CV en inglés, bio de Instagram y más. Listas para usar hoy.</span></div>
+        <div style="background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(99,102,241,.08));border:1px solid rgba(168,85,247,.3);border-radius:16px;padding:14px;margin-bottom:10px">
+            <b style="color:#a855f7">🎨 Marca personal</b><br><span style="color:#cbd5e1;font-size:12px">Nombre, bio, colores, hashtags y estilo visual para tu marca en Instagram generados con IA.</span></div>
+        <div style="background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(16,185,129,.08));border:1px solid rgba(34,197,94,.3);border-radius:16px;padding:14px;margin-bottom:10px">
+            <b style="color:#22c55e">💰 Finanzas personales</b><br><span style="color:#cbd5e1;font-size:12px">Presupuesto, simulador de decisiones, calculadora de ahorro y cuánto necesitás ganar.</span></div>
         <div style="background:linear-gradient(135deg,rgba(250,204,21,.12),rgba(34,197,94,.08));border:1px solid rgba(250,204,21,.3);border-radius:16px;padding:14px;margin-bottom:10px">
-            <b style="color:#facc15">🔥 Gamificación</b><br><span style="color:#cbd5e1;font-size:12px">XP, rachas, niveles, desafíos diarios, logros y ranking.</span></div>
+            <b style="color:#facc15">🔥 Gamificación</b><br><span style="color:#cbd5e1;font-size:12px">XP, rachas, niveles del 1 al 5, desafíos diarios, logros desbloqueables y ranking.</span></div>
         ''', unsafe_allow_html=True)
 
     st.markdown('''<div style="text-align:center;padding:18px;background:linear-gradient(135deg,rgba(250,204,21,.1),rgba(56,189,248,.08));border:1px solid rgba(250,204,21,.25);border-radius:18px;margin:12px 0 20px">
