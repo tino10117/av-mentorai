@@ -716,11 +716,51 @@ def generar_certificado_pdf(nombre, nivel, lecciones_completadas, fecha):
 if "logged_in" not in st.session_state: st.session_state.logged_in=False
 
 if not st.session_state.logged_in:
-    st.markdown(f'<div class="hero-card"><div class="av-logo">{APP_NAME}</div><div class="av-subtitle">{APP_TAGLINE}</div><p class="small-text">Mentor de negocios + Inglés desde cero + Roleplay + Diario. Todo en uno.</p><p class="small-text"><b>{APP_VERSION}</b></p></div>',unsafe_allow_html=True)
-    c1,c2,c3=st.columns(3)
-    with c1: st.markdown('<div class="card"><h3>🧠 Mentor de negocios</h3><p class="small-text">Consejos según tu objetivo y nivel.</p></div>',unsafe_allow_html=True)
-    with c2: st.markdown('<div class="card"><h3>📚 Inglés completo</h3><p class="small-text">Lecciones, quiz, roleplay, diario y certificado.</p></div>',unsafe_allow_html=True)
-    with c3: st.markdown('<div class="card"><h3>🔥 Gamificación</h3><p class="small-text">XP, rachas, niveles y desafíos diarios.</p></div>',unsafe_allow_html=True)
+    # HERO
+    st.markdown(f'''<div style="text-align:center;padding:36px 16px 16px">
+        <div style="font-size:48px;font-weight:900;background:linear-gradient(90deg,#facc15,#f97316,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin-bottom:10px">⚡ {APP_NAME}</div>
+        <div style="font-size:17px;color:#cbd5e1;margin-bottom:6px">{APP_TAGLINE}</div>
+        <div style="font-size:13px;color:#64748b">Mentor de negocios · Inglés · Matemáticas · Herramientas · Todo con IA</div>
+    </div>''', unsafe_allow_html=True)
+
+    st.markdown('''<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0 24px">
+        <div style="background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.3);border-radius:12px;padding:10px 16px;text-align:center">
+            <div style="font-size:20px;font-weight:800;color:#facc15">14</div><div style="font-size:11px;color:#94a3b8">Modos mentor</div></div>
+        <div style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:12px;padding:10px 16px;text-align:center">
+            <div style="font-size:20px;font-weight:800;color:#a855f7">12</div><div style="font-size:11px;color:#94a3b8">Lecciones inglés</div></div>
+        <div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:12px;padding:10px 16px;text-align:center">
+            <div style="font-size:20px;font-weight:800;color:#22c55e">10</div><div style="font-size:11px;color:#94a3b8">Lecciones mate</div></div>
+        <div style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);border-radius:12px;padding:10px 16px;text-align:center">
+            <div style="font-size:20px;font-weight:800;color:#38bdf8">8</div><div style="font-size:11px;color:#94a3b8">Roleplay</div></div>
+        <div style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);border-radius:12px;padding:10px 16px;text-align:center">
+            <div style="font-size:20px;font-weight:800;color:#f97316">8</div><div style="font-size:11px;color:#94a3b8">Herramientas</div></div>
+    </div>''', unsafe_allow_html=True)
+
+    st.markdown("### ¿Qué tiene AV MentorAI?")
+    fa,fb=st.columns(2)
+    with fa:
+        st.markdown('''
+        <div style="background:linear-gradient(135deg,rgba(250,204,21,.12),rgba(249,115,22,.08));border:1px solid rgba(250,204,21,.3);border-radius:16px;padding:14px;margin-bottom:10px">
+            <b style="color:#facc15">🧠 Mentor de Negocios</b><br><span style="color:#cbd5e1;font-size:12px">14 modos: ventas, marketing, e-commerce, supermercado y más. Analizá fotos de tu negocio.</span></div>
+        <div style="background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(99,102,241,.08));border:1px solid rgba(168,85,247,.3);border-radius:16px;padding:14px;margin-bottom:10px">
+            <b style="color:#a855f7">📚 Inglés con Alex</b><br><span style="color:#cbd5e1;font-size:12px">12 lecciones, quiz, roleplay, traductor, diario y certificado PDF.</span></div>
+        <div style="background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(99,102,241,.08));border:1px solid rgba(56,189,248,.3);border-radius:16px;padding:14px;margin-bottom:10px">
+            <b style="color:#38bdf8">🔍 Análisis de Competencia</b><br><span style="color:#cbd5e1;font-size:12px">Plan de 5 pasos para superar a cualquier competidor.</span></div>
+        ''', unsafe_allow_html=True)
+    with fb:
+        st.markdown('''
+        <div style="background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(16,185,129,.08));border:1px solid rgba(34,197,94,.3);border-radius:16px;padding:14px;margin-bottom:10px">
+            <b style="color:#22c55e">🔢 Matemáticas con Bruno</b><br><span style="color:#cbd5e1;font-size:12px">10 lecciones + calculadora de márgenes, ROI y proyecciones.</span></div>
+        <div style="background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(239,68,68,.08));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:14px;margin-bottom:10px">
+            <b style="color:#f97316">✍️ Generador de Contenido</b><br><span style="color:#cbd5e1;font-size:12px">Posts de Instagram, WhatsApp, Mercado Libre y TikTok listos para publicar.</span></div>
+        <div style="background:linear-gradient(135deg,rgba(250,204,21,.12),rgba(34,197,94,.08));border:1px solid rgba(250,204,21,.3);border-radius:16px;padding:14px;margin-bottom:10px">
+            <b style="color:#facc15">🔥 Gamificación</b><br><span style="color:#cbd5e1;font-size:12px">XP, rachas, niveles, desafíos diarios, logros y ranking.</span></div>
+        ''', unsafe_allow_html=True)
+
+    st.markdown('''<div style="text-align:center;padding:18px;background:linear-gradient(135deg,rgba(250,204,21,.1),rgba(56,189,248,.08));border:1px solid rgba(250,204,21,.25);border-radius:18px;margin:12px 0 20px">
+        <div style="font-size:17px;font-weight:800;color:#f8fafc;margin-bottom:4px">¿Listo para empezar?</div>
+        <div style="font-size:13px;color:#94a3b8">Creá tu cuenta gratis en 30 segundos. Sin tarjeta de crédito.</div>
+    </div>''', unsafe_allow_html=True)
     lt,rt=st.tabs(["Iniciar sesión","Crear cuenta"])
     with lt:
         el=st.text_input("Gmail",placeholder="tuemail@gmail.com",key="login_email")
@@ -2137,4 +2177,4 @@ Generá contenido que realmente venda, no genérico."""
             st.write("")
 
         st.divider()
-        st.markdown('<div class="card"><p class="small-text">💡 <b>¿Usás alguna de estas herramientas?</b> Contale al mentor de negocios cuál usás y te ayuda a sacarle el máximo provecho.</p></div>', unsafe_allow_html=True) 
+        st.markdown('<div class="card"><p class="small-text">💡 <b>¿Usás alguna de estas herramientas?</b> Contale al mentor de negocios cuál usás y te ayuda a sacarle el máximo provecho.</p></div>', unsafe_allow_html=True)
