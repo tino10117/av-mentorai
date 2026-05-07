@@ -23,6 +23,106 @@ APP_VERSION = "Demo privada v4.0"
 MODO_DEV    = True
 os.makedirs(DATA_DIR, exist_ok=True)
 
+PLANTILLAS = {
+    "📞 Guión de venta por WhatsApp": """Hola [Nombre]! 👋
+
+Vi que podría interesarte [producto/servicio].
+
+Te cuento en 3 líneas:
+✅ [Beneficio 1]
+✅ [Beneficio 2]  
+✅ [Beneficio 3]
+
+Precio: [precio] — y si querés te hago una oferta especial esta semana.
+
+¿Te mando más info o preferís que te llame?""",
+
+    "💼 Pitch de ventas de 60 segundos": """Hola, soy [nombre] de [empresa/negocio].
+
+Nos especializamos en ayudar a [tipo de cliente] a [resultado que logran].
+
+Lo que nos diferencia es [tu diferencial único].
+
+Trabajamos con clientes como [ejemplo o tipo de cliente] y logramos [resultado concreto].
+
+Me gustaría saber si esto podría ser útil para vos. ¿Tenés 10 minutos esta semana para charlar?""",
+
+    "📄 CV básico en inglés": """FULL NAME
+Email: | Phone: | LinkedIn: | City, Country
+
+PROFESSIONAL SUMMARY
+[2-3 sentences describing who you are and what you offer professionally]
+
+WORK EXPERIENCE
+[Job Title] | [Company] | [Dates]
+• [Achievement or responsibility 1]
+• [Achievement or responsibility 2]
+• [Achievement or responsibility 3]
+
+EDUCATION
+[Degree/Course] | [Institution] | [Year]
+
+SKILLS
+Languages: Spanish (native), English (intermediate)
+Technical: [list your skills]
+Soft skills: [communication, teamwork, etc.]
+
+LANGUAGES
+Spanish: Native | English: [level]""",
+
+    "📊 Plan de negocio simple": """PLAN DE NEGOCIO — [Nombre del negocio]
+
+1. QUÉ VENDO
+Producto/Servicio: [descripción]
+Precio de venta: $[precio]
+Costo de producción: $[costo]
+Ganancia por unidad: $[ganancia]
+
+2. A QUIÉN LE VENDO
+Cliente ideal: [descripción]
+Edad: | Ubicación: | Problema que resuelvo:
+
+3. CÓMO LO VENDO
+Canales: WhatsApp / Instagram / Local / Mercado Libre
+Estrategia: [cómo vas a conseguir clientes]
+
+4. NÚMEROS DEL MES
+Meta de ventas: [X] unidades
+Ingresos esperados: $[monto]
+Costos fijos: $[monto]
+Ganancia esperada: $[monto]
+
+5. PRÓXIMOS 3 PASOS
+1. [Acción concreta]
+2. [Acción concreta]
+3. [Acción concreta]""",
+
+    "📱 Bio para Instagram": """[NOMBRE DEL NEGOCIO] ✨
+[Qué hacés en 1 línea]
+📍 [Ciudad] | 🚚 Envíos a todo el país
+💬 Escribinos por DM o WhatsApp
+👇 Ver catálogo / Ver precios""",
+
+    "📧 Email a proveedor": """Asunto: Consulta de precios — [tu nombre/empresa]
+
+Estimado/a equipo de [Proveedor],
+
+Mi nombre es [nombre] y represento a [tu negocio/nombre].
+
+Estoy interesado/a en adquirir los siguientes productos:
+- [Producto 1]: [cantidad aproximada]
+- [Producto 2]: [cantidad aproximada]
+
+¿Podrían enviarme su lista de precios actualizada y condiciones de pago?
+
+Quedo a la espera de su respuesta.
+
+Saludos,
+[Nombre]
+[Teléfono]
+[Email]""",
+}
+
 # ─────────────────────────────────────────
 # LECCIONES  (offline — no necesitan IA)
 # ─────────────────────────────────────────
@@ -2420,103 +2520,4 @@ Generá contenido que realmente venda, no genérico."""
                 st.info(f"Con 30% de margen de seguridad: **${total*1.3:,.0f}/mes**")
                 st.caption(f"Eso es ${total/22:,.0f} por día hábil.")
 
-PLANTILLAS = {
-    "📞 Guión de venta por WhatsApp": """Hola [Nombre]! 👋
-
-Vi que podría interesarte [producto/servicio].
-
-Te cuento en 3 líneas:
-✅ [Beneficio 1]
-✅ [Beneficio 2]  
-✅ [Beneficio 3]
-
-Precio: [precio] — y si querés te hago una oferta especial esta semana.
-
-¿Te mando más info o preferís que te llame?""",
-
-    "💼 Pitch de ventas de 60 segundos": """Hola, soy [nombre] de [empresa/negocio].
-
-Nos especializamos en ayudar a [tipo de cliente] a [resultado que logran].
-
-Lo que nos diferencia es [tu diferencial único].
-
-Trabajamos con clientes como [ejemplo o tipo de cliente] y logramos [resultado concreto].
-
-Me gustaría saber si esto podría ser útil para vos. ¿Tenés 10 minutos esta semana para charlar?""",
-
-    "📄 CV básico en inglés": """FULL NAME
-Email: | Phone: | LinkedIn: | City, Country
-
-PROFESSIONAL SUMMARY
-[2-3 sentences describing who you are and what you offer professionally]
-
-WORK EXPERIENCE
-[Job Title] | [Company] | [Dates]
-• [Achievement or responsibility 1]
-• [Achievement or responsibility 2]
-• [Achievement or responsibility 3]
-
-EDUCATION
-[Degree/Course] | [Institution] | [Year]
-
-SKILLS
-Languages: Spanish (native), English (intermediate)
-Technical: [list your skills]
-Soft skills: [communication, teamwork, etc.]
-
-LANGUAGES
-Spanish: Native | English: [level]""",
-
-    "📊 Plan de negocio simple": """PLAN DE NEGOCIO — [Nombre del negocio]
-
-1. QUÉ VENDO
-Producto/Servicio: [descripción]
-Precio de venta: $[precio]
-Costo de producción: $[costo]
-Ganancia por unidad: $[ganancia]
-
-2. A QUIÉN LE VENDO
-Cliente ideal: [descripción]
-Edad: | Ubicación: | Problema que resuelvo:
-
-3. CÓMO LO VENDO
-Canales: WhatsApp / Instagram / Local / Mercado Libre
-Estrategia: [cómo vas a conseguir clientes]
-
-4. NÚMEROS DEL MES
-Meta de ventas: [X] unidades
-Ingresos esperados: $[monto]
-Costos fijos: $[monto]
-Ganancia esperada: $[monto]
-
-5. PRÓXIMOS 3 PASOS
-1. [Acción concreta]
-2. [Acción concreta]
-3. [Acción concreta]""",
-
-    "📱 Bio para Instagram": """[NOMBRE DEL NEGOCIO] ✨
-[Qué hacés en 1 línea]
-📍 [Ciudad] | 🚚 Envíos a todo el país
-💬 Escribinos por DM o WhatsApp
-👇 Ver catálogo / Ver precios""",
-
-    "📧 Email a proveedor": """Asunto: Consulta de precios — [tu nombre/empresa]
-
-Estimado/a equipo de [Proveedor],
-
-Mi nombre es [nombre] y represento a [tu negocio/nombre].
-
-Estoy interesado/a en adquirir los siguientes productos:
-- [Producto 1]: [cantidad aproximada]
-- [Producto 2]: [cantidad aproximada]
-
-¿Podrían enviarme su lista de precios actualizada y condiciones de pago?
-
-Quedo a la espera de su respuesta.
-
-Saludos,
-[Nombre]
-[Teléfono]
-[Email]""",
-}
 
