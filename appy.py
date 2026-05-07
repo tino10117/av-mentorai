@@ -406,6 +406,18 @@ h1,h2,h3,h4,p,label,span{color:#f8fafc!important;}
 [data-testid="stAudioInput"] *{background:#1e293b!important;color:#f8fafc!important;}
 [data-testid="stExpander"]{background:rgba(15,23,42,.88)!important;border:1px solid rgba(250,204,21,.25)!important;border-radius:16px!important;}
 
+/* SELECTOR DE NAVEGACIÓN */
+[data-testid="stSelectbox"] > div > div {
+    background: linear-gradient(90deg,rgba(250,204,21,.15),rgba(56,189,248,.08)) !important;
+    border: 2px solid rgba(250,204,21,.5) !important;
+    border-radius: 14px !important;
+    color: #f8fafc !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    padding: 4px 8px !important;
+}
+[data-testid="stSelectbox"] svg { fill: #facc15 !important; }
+
 /* FORZAR BOTÓN HAMBURGUESA VISIBLE EN MOBILE */
 [data-testid="stSidebarCollapsedControl"]{
     display:block!important;
@@ -766,14 +778,7 @@ def generar_certificado_pdf(nombre, nivel, lecciones_completadas, fecha):
 # ─────────────────────────────────────────
 if "logged_in" not in st.session_state: st.session_state.logged_in=False
 
-# Leer navegación desde URL params sin perder sesión
-_params = st.query_params
-if "nav" in _params:
-    if "pagina" not in st.session_state:
-        st.session_state.pagina = _params["nav"]
-    else:
-        st.session_state.pagina = _params["nav"]
-    st.query_params.clear()
+
 
 if not st.session_state.logged_in:
     # HERO
@@ -995,65 +1000,7 @@ with st.sidebar:
 # ─────────────────────────────────────────
 pagina = st.session_state.get("pagina","mentor")
 
-# BARRA NAVEGACIÓN INFERIOR — solo visible en mobile
-st.markdown(f"""
-<style>
-.nav-bottom {{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(180deg,#0b1120,#020617);
-    border-top: 1px solid rgba(250,204,21,.25);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 8px 0 12px;
-    z-index: 9999;
-    display: none;
-}}
-@media(max-width:768px) {{
-    .nav-bottom {{ display: flex !important; }}
-    .block-container {{ padding-bottom: 80px !important; }}
-}}
-.nav-btn {{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 10px;
-    text-decoration: none;
-}}
-.nav-btn span.icon {{ font-size: 20px; }}
-.nav-btn span.label {{ font-size: 9px; color: #64748b; font-weight: 600; }}
-.nav-btn.active span.label {{ color: #facc15; }}
-</style>
-<div class="nav-bottom">
-    <div class="nav-btn {'active' if pagina=='mentor' else ''}" onclick="window.location.href=window.location.pathname+'?nav=mentor'">
-        <span class="icon">🧠</span><span class="label">Mentor</span>
-    </div>
-    <div class="nav-btn {'active' if pagina=='ingles' else ''}" onclick="window.location.href=window.location.pathname+'?nav=ingles'">
-        <span class="icon">📚</span><span class="label">Inglés</span>
-    </div>
-    <div class="nav-btn {'active' if pagina=='mate' else ''}" onclick="window.location.href=window.location.pathname+'?nav=mate'">
-        <span class="icon">🔢</span><span class="label">Mate</span>
-    </div>
-    <div class="nav-btn {'active' if pagina=='herramientas' else ''}" onclick="window.location.href=window.location.pathname+'?nav=herramientas'">
-        <span class="icon">🛠️</span><span class="label">Herramientas</span>
-    </div>
-    <div class="nav-btn {'active' if pagina=='progreso' else ''}" onclick="window.location.href=window.location.pathname+'?nav=progreso'">
-        <span class="icon">📈</span><span class="label">Progreso</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
 
-# Leer navegación desde URL params - NO hace rerun para no perder sesión
-params = st.query_params
-if "nav" in params and st.session_state.get("logged_in"):
-    st.session_state.pagina = params["nav"]
-    st.query_params.clear()
 
 # Crear variables para cada "tab" usando contenedores condicionales
 tab_mentor = None; tab_english = None; tab_mate = None; tab_herramientas = None
