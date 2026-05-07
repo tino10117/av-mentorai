@@ -782,6 +782,8 @@ def generar_certificado_pdf(nombre, nivel, lecciones_completadas, fecha):
 
     c.save(); buf.seek(0); return buf
 
+
+
 # ─────────────────────────────────────────
 # LOGIN
 # ─────────────────────────────────────────
@@ -2328,6 +2330,199 @@ Generá contenido que realmente venda, no genérico."""
                 st.code(st.session_state.plantilla_personalizada, language=None)
                 st.download_button("⬇️ Descargar personalizada", data=st.session_state.plantilla_personalizada,
                     file_name="plantilla_personalizada.txt", mime="text/plain", key="dl_pers")
+
+    # ── MARCA PERSONAL ──
+    if herr_sel == "Marca personal":
+            st.markdown("### 🎨 Creador de marca personal")
+            st.caption("La IA te ayuda a crear tu identidad: nombre, bio, colores y estilo para Instagram.")
+
+            marca_rubro = st.text_input("¿Qué vendés o a qué te dedicás?", placeholder="Ej: vendo ropa de mujer, soy fotógrafo, hago tortas personalizadas", key="marca_rubro")
+            marca_publico = st.text_input("¿A quién le vendés?", placeholder="Ej: mujeres jóvenes, empresas pequeñas, mamás", key="marca_publico")
+            marca_estilo = st.selectbox("Estilo de tu marca:", ["Moderno y minimalista", "Divertido y colorido", "Elegante y premium", "Cercano y familiar", "Joven y urbano"], key="marca_estilo")
+            marca_ciudad = st.text_input("¿De dónde sos?", placeholder="Ej: Buenos Aires, Córdoba, Mendoza", key="marca_ciudad")
+
+            if st.button("🎨 Crear mi marca", key="btn_marca") and marca_rubro.strip():
+                prompt_m = f"""Creá una identidad de marca completa para este emprendedor:
+
+Rubro: {marca_rubro}
+Público: {marca_publico}
+Estilo: {marca_estilo}
+Ciudad: {marca_ciudad}
+
+Dame:
+1. **5 nombres de marca** creativos y memorables
+2. **Bio para Instagram** (máximo 150 caracteres, con emojis)
+3. **Bio en inglés** para llegar a más gente
+4. **3 colores sugeridos** con sus códigos hex y por qué funcionan
+5. **Estilo visual** sugerido: tipo de fotos, filtros, tipografía
+6. **Hashtags** — 10 hashtags en español + 5 en inglés para tu rubro
+7. **Frase de marca** — una frase corta que te represente
+8. **Tono de comunicación** — cómo hablarle a tu audiencia
+
+Sé específico y creativo. Pensá en marcas que la gente quiera seguir."""
+
+                user_h = st.session_state.user_data
+                with st.spinner("🎨 Creando tu marca..."):
+                    try:
+                        r = client.chat.completions.create(model="gpt-4o",
+                            messages=[{"role":"system","content":"Sos un experto en branding y marketing digital para LATAM. Creás identidades de marca modernas, auténticas y que conectan con el público joven latinoamericano."},
+                                      {"role":"user","content":prompt_m}],
+                            temperature=0.9, max_tokens=1200)
+                        resp_m = r.choices[0].message.content
+                        st.session_state.mi_marca = resp_m
+                        sumar_xp(15)
+                        guardar_usuario(user_h)
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+
+            if st.session_state.get("mi_marca"):
+                st.divider()
+                st.markdown("### ✨ Tu marca personal")
+                st.markdown(f'<div class="card" style="border-color:rgba(168,85,247,.4);white-space:pre-wrap;line-height:1.7">{st.session_state.mi_marca}</div>', unsafe_allow_html=True)
+                st.download_button("⬇️ Descargar mi marca", data=st.session_state.mi_marca,
+                    file_name="mi_marca_personal.txt", mime="text/plain", key="dl_marca")
+                if st.button("🔄 Generar otra versión", key="btn_marca2"):
+                    st.session_state.mi_marca = None
+                    st.rerun()
+
+    # ── FINANZAS PERSONALES ──
+    if herr_sel == "Finanzas":
+            st.markdown("### 💰 Finanzas personales con IA")
+            st.caption("Controlá tu plata, armá tu presupuesto y tomá mejores decisiones financieras.")
+
+            fin_tabs = st.selectbox("¿Qué querés hacer?", [
+                "📊 Armar mi presupuesto",
+                "🤔 Simulador de decisiones",
+                "💸 Calculadora de ahorro",
+                "📈 ¿Cuánto necesito ganar?"
+            ], key="fin_tabs", label_visibility="collapsed")
+
+            if fin_tabs == "📊 Armar mi presupuesto":
+                st.markdown("**Ingresá tus ingresos y gastos mensuales:**")
+                fin_ingreso = st.number_input("💵 Ingreso mensual ($):", min_value=0, step=1000, key="fin_ing")
+                st.markdown("**Gastos fijos:**")
+                f1,f2 = st.columns(2)
+                with f1:
+                    fin_alquiler = st.number_input("🏠 Alquiler/cuota:", min_value=0, step=1000, key="fin_alq")
+                    fin_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="fin_com")
+                    fin_transporte = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="fin_trans")
+                with f2:
+                    fin_servicios = st.number_input("💡 Servicios:", min_value=0, step=1000, key="fin_serv")
+                    fin_entretenimiento = st.number_input("🎬 Entretenimiento:", min_value=0, step=1000, key="fin_ent")
+                    fin_otros = st.number_input("📦 Otros gastos:", min_value=0, step=1000, key="fin_otros")
+
+                if st.button("📊 Analizar mis finanzas", key="btn_presupuesto"):
+                    total_gastos = fin_alquiler+fin_comida+fin_transporte+fin_servicios+fin_entretenimiento+fin_otros
+                    saldo = fin_ingreso - total_gastos
+                    pct_ahorro = (saldo/fin_ingreso*100) if fin_ingreso > 0 else 0
+
+                    col_r1, col_r2, col_r3 = st.columns(3)
+                    with col_r1: st.metric("💵 Ingresos", f"${fin_ingreso:,.0f}")
+                    with col_r2: st.metric("💸 Gastos totales", f"${total_gastos:,.0f}")
+                    with col_r3:
+                        delta_color = "normal" if saldo >= 0 else "inverse"
+                        st.metric("💰 Saldo", f"${saldo:,.0f}", f"{pct_ahorro:.1f}% de ahorro")
+
+                    if saldo < 0:
+                        st.error(f"⚠️ Estás gastando ${abs(saldo):,.0f} más de lo que ganás.")
+                    elif pct_ahorro < 10:
+                        st.warning("⚠️ Tu ahorro es bajo. Lo ideal es ahorrar al menos el 20%.")
+                    else:
+                        st.success(f"✅ Bien. Estás ahorrando {pct_ahorro:.1f}% de tus ingresos.")
+
+                    # Pedir consejo a la IA
+                    prompt_fin = f"""Analizo las finanzas de este usuario y dame consejos concretos:
+Ingreso: ${fin_ingreso} | Alquiler: ${fin_alquiler} | Comida: ${fin_comida} | Transporte: ${fin_transporte} | Servicios: ${fin_servicios} | Entretenimiento: ${fin_entretenimiento} | Otros: ${fin_otros}
+Total gastos: ${total_gastos} | Saldo: ${saldo} | % ahorro: {pct_ahorro:.1f}%
+
+Dame: 1) Diagnóstico en 2 líneas 2) 3 gastos donde puede recortar 3) Cómo llegar al 20% de ahorro 4) Qué hacer con el dinero que sobra."""
+                    with st.spinner("Analizando..."):
+                        try:
+                            r = client.chat.completions.create(model="gpt-4o-mini",
+                                messages=[{"role":"system","content":"Sos un asesor financiero personal para LATAM. Das consejos prácticos, directos y adaptados a la realidad argentina."},
+                                          {"role":"user","content":prompt_fin}],
+                                max_tokens=600)
+                            st.markdown("**💡 Consejos de la IA:**")
+                            st.markdown(f'<div class="card" style="border-color:rgba(34,197,94,.4)">{r.choices[0].message.content}</div>', unsafe_allow_html=True)
+                        except Exception as e:
+                            st.error(f"Error: {e}")
+
+            elif fin_tabs == "🤔 Simulador de decisiones":
+                st.markdown("**Describí tu dilema financiero:**")
+                dilema = st.text_area("¿Qué decisión tenés que tomar?",
+                    placeholder="Ej: ¿Me conviene comprar un auto de $500.000 en cuotas o invertir esa plata en mi negocio? | ¿Pago el curso de $30.000 o ahorro ese dinero?",
+                    height=100, key="dilema")
+                contexto_fin = st.text_input("Tu situación económica actual (opcional):", placeholder="Ej: gano $150.000 por mes, tengo $80.000 ahorrados", key="ctx_fin")
+                if st.button("🤔 Analizar decisión", key="btn_dilema") and dilema.strip():
+                    prompt_d = f"""Analizá esta decisión financiera y dame una recomendación clara:
+
+Dilema: {dilema}
+Situación: {contexto_fin or 'No especificada'}
+
+Dame:
+1. Análisis de la Opción A y Opción B (pros y contras)
+2. Qué pasa en 3, 6 y 12 meses con cada opción
+3. Tu recomendación clara y por qué
+4. Qué haría alguien financieramente inteligente en este caso
+5. Una acción concreta para tomar HOY
+
+Sé directo y práctico, no vago."""
+                    with st.spinner("Analizando tu decisión..."):
+                        try:
+                            r = client.chat.completions.create(model="gpt-4o",
+                                messages=[{"role":"system","content":"Sos un asesor financiero experto para LATAM. Das análisis claros, honestos y prácticos adaptados a la realidad económica argentina."},
+                                          {"role":"user","content":prompt_d}],
+                                max_tokens=800)
+                            resp_d = r.choices[0].message.content
+                            st.markdown(f'<div class="card" style="border-color:rgba(250,204,21,.4)">{resp_d}</div>', unsafe_allow_html=True)
+                            sumar_xp(10)
+                        except Exception as e:
+                            st.error(f"Error: {e}")
+
+            elif fin_tabs == "💸 Calculadora de ahorro":
+                st.markdown("**¿Para qué querés ahorrar?**")
+                meta_nombre = st.text_input("Meta de ahorro:", placeholder="Ej: viaje, auto, negocio propio, fondo de emergencia", key="meta_nom")
+                meta_monto = st.number_input("¿Cuánto necesitás? ($):", min_value=0, step=1000, key="meta_mont")
+                ahorro_mensual = st.number_input("¿Cuánto podés ahorrar por mes? ($):", min_value=0, step=1000, key="ahorro_mens")
+                if st.button("💸 Calcular", key="btn_ahorro") and meta_monto > 0 and ahorro_mensual > 0:
+                    meses = meta_monto / ahorro_mensual
+                    años = meses / 12
+                    st.success(f"Para ahorrar ${meta_monto:,.0f} ahorrando ${ahorro_mensual:,.0f}/mes necesitás **{meses:.0f} meses** ({años:.1f} años).")
+                    if meses > 24:
+                        st.warning("Son más de 2 años. ¿Podés aumentar el ahorro mensual o reducir la meta?")
+                        nuevo = meta_monto / 12
+                        st.info(f"Para lograrlo en 1 año necesitarías ahorrar ${nuevo:,.0f}/mes.")
+                    sumar_xp(5)
+
+            elif fin_tabs == "📈 ¿Cuánto necesito ganar?":
+                st.markdown("**Calculá cuánto necesitás ganar para vivir como querés:**")
+                g1, g2 = st.columns(2)
+                with g1:
+                    g_alquiler = st.number_input("🏠 Alquiler deseado:", min_value=0, step=1000, key="g_alq")
+                    g_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="g_com")
+                    g_trans = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="g_trans")
+                with g2:
+                    g_serv = st.number_input("💡 Servicios:", min_value=0, step=1000, key="g_serv")
+                    g_ocio = st.number_input("🎬 Ocio y entretenimiento:", min_value=0, step=1000, key="g_ocio")
+                    g_ahorro = st.number_input("💰 Ahorro mensual deseado:", min_value=0, step=1000, key="g_aho")
+                if st.button("📈 Calcular", key="btn_ganar"):
+                    total_necesario = g_alquiler+g_comida+g_trans+g_serv+g_ocio+g_ahorro
+                    con_imputados = total_necesario * 1.3  # 30% para impuestos/imprevistos
+                    st.success(f"**Necesitás ganar al menos ${total_necesario:,.0f}/mes**")
+                    st.info(f"Recomendado con margen de seguridad (30% extra): **${con_imputados:,.0f}/mes**")
+                    por_dia = total_necesario / 22
+                    st.caption(f"Eso es ${por_dia:,.0f} por día hábil que necesitás generar.")
+                    sumar_xp(5)
+
+# ════════════════════════════════════════
+# MÓDULOS NUEVOS EN HERRAMIENTAS
+# ════════════════════════════════════════
+
+# Estos se agregan dentro del tab_herramientas via el selectbox herr_sel
+# Los bloques ya están conectados arriba con el if herr_sel ==
+
+# ── PLANTILLAS DESCARGABLES ──
+# (Se activa cuando herr_sel == "📋 Plantillas")
 
     # ── MARCA PERSONAL ──
     if herr_sel == "Marca personal":
