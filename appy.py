@@ -406,6 +406,25 @@ h1,h2,h3,h4,p,label,span{color:#f8fafc!important;}
 [data-testid="stAudioInput"] *{background:#1e293b!important;color:#f8fafc!important;}
 [data-testid="stExpander"]{background:rgba(15,23,42,.88)!important;border:1px solid rgba(250,204,21,.25)!important;border-radius:16px!important;}
 
+/* FORZAR BOTÓN HAMBURGUESA VISIBLE EN MOBILE */
+[data-testid="stSidebarCollapsedControl"]{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    background:rgba(250,204,21,.15)!important;
+    border:1px solid rgba(250,204,21,.4)!important;
+    border-radius:10px!important;
+    padding:4px!important;
+}
+[data-testid="stSidebarCollapsedControl"] svg{
+    fill:#facc15!important;
+    width:24px!important;
+    height:24px!important;
+}
+section[data-testid="stSidebarContent"]{
+    padding-top:1rem!important;
+}
+
 /* SIDEBAR NAVIGATION */
 [data-testid="stSidebar"]{background:linear-gradient(180deg,#020617 0%,#0b1120 100%)!important;border-right:1px solid rgba(250,204,21,.2)!important;}
 [data-testid="stSidebar"] .stButton>button{
@@ -966,6 +985,67 @@ with st.sidebar:
 # TABS
 # ─────────────────────────────────────────
 pagina = st.session_state.get("pagina","mentor")
+
+# BARRA NAVEGACIÓN INFERIOR — solo visible en mobile
+st.markdown(f"""
+<style>
+.nav-bottom {{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg,#0b1120,#020617);
+    border-top: 1px solid rgba(250,204,21,.25);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0 12px;
+    z-index: 9999;
+    display: none;
+}}
+@media(max-width:768px) {{
+    .nav-bottom {{ display: flex !important; }}
+    .block-container {{ padding-bottom: 80px !important; }}
+}}
+.nav-btn {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 10px;
+    text-decoration: none;
+}}
+.nav-btn span.icon {{ font-size: 20px; }}
+.nav-btn span.label {{ font-size: 9px; color: #64748b; font-weight: 600; }}
+.nav-btn.active span.label {{ color: #facc15; }}
+</style>
+<div class="nav-bottom">
+    <a class="nav-btn {'active' if pagina=='mentor' else ''}" href="?nav=mentor">
+        <span class="icon">🧠</span><span class="label">Mentor</span>
+    </a>
+    <a class="nav-btn {'active' if pagina=='ingles' else ''}" href="?nav=ingles">
+        <span class="icon">📚</span><span class="label">Inglés</span>
+    </a>
+    <a class="nav-btn {'active' if pagina=='mate' else ''}" href="?nav=mate">
+        <span class="icon">🔢</span><span class="label">Mate</span>
+    </a>
+    <a class="nav-btn {'active' if pagina=='herramientas' else ''}" href="?nav=herramientas">
+        <span class="icon">🛠️</span><span class="label">Herramientas</span>
+    </a>
+    <a class="nav-btn {'active' if pagina=='progreso' else ''}" href="?nav=progreso">
+        <span class="icon">📈</span><span class="label">Progreso</span>
+    </a>
+</div>
+""", unsafe_allow_html=True)
+
+# Leer navegación desde URL params
+params = st.query_params
+if "nav" in params:
+    st.session_state.pagina = params["nav"]
+    st.query_params.clear()
+    st.rerun()
 
 # Crear variables para cada "tab" usando contenedores condicionales
 tab_mentor = None; tab_english = None; tab_mate = None; tab_herramientas = None
