@@ -732,7 +732,8 @@ XP: {user['xp']} | Racha: {user['racha']} días | Modo: {modo} | Desafío: {desa
 Memoria: {mem}
 Identidad: Moderno, directo, motivador. "No lo pienses tanto, ejecutalo." "El negocio premia al que acciona mejor."
 Estilo: Español latino, claro, práctico. Ejemplos de WhatsApp, Instagram, Mercado Libre.
-Siempre terminá con una acción concreta para HOY. Si hay imagen, analizala con criterio empresarial."""
+Siempre terminá con una acción concreta para HOY. Si hay imagen, analizala con criterio empresarial.
+Si tenés acceso a búsqueda web, usala para dar datos actualizados de tendencias, precios y competidores. Indicá siempre cuando la info viene de internet con "🌐 Dato actualizado:"."""
 
 def system_english(user,leccion=None,modo="chat"):
     nivel=user.get("english_nivel","Principiante")
@@ -770,9 +771,20 @@ def enviar_negocio(ui,desafio,ib64=None,im=None,na=None):
     sumar_xp(10)
     hist=[{"role":m["role"],"content":m["content"]} for m in user["messages"][:-1]]
     hist.append({"role":"user","content":ca})
-    with st.spinner("⚡ AV MentorAI está pensando..."):
+    keywords_web=["tendencia","precio","competidor","competencia","mercado","hoy","dólar","inflación","noticia","busca","buscá","cuánto vale","cuánto cuesta","qué está pasando","2025","actualidad"]
+    necesita_web=any(kw in (ui or "").lower() for kw in keywords_web)
+    with st.spinner("🌐 Buscando en internet..." if necesita_web else "⚡ AV MentorAI está pensando..."):
         try:
-            r=client.chat.completions.create(model="gpt-4o",messages=[{"role":"system","content":system_negocio(user,st.session_state.modo,desafio)},*hist],temperature=0.85,max_tokens=1000)
+            if necesita_web:
+                r=client.chat.completions.create(
+                    model="gpt-4o-search-preview",
+                    messages=[{"role":"system","content":system_negocio(user,st.session_state.modo,desafio)},*hist],
+                    web_search_options={"search_context_size":"medium"},
+                    max_tokens=1000)
+            else:
+                r=client.chat.completions.create(model="gpt-4o",
+                    messages=[{"role":"system","content":system_negocio(user,st.session_state.modo,desafio)},*hist],
+                    temperature=0.85,max_tokens=1000)
             resp=r.choices[0].message.content
         except Exception as e: resp=f"Error: {e}"
     user["messages"].append({"role":"assistant","content":resp}); guardar_usuario(user); st.rerun()
@@ -1121,6 +1133,18 @@ with tab_mentor:
         if st.button("🔥 Desafío", use_container_width=True, key="qb5"): qp=f"Quiero hacer este desafío: {desafio}. Guiame paso a paso."
     with c6:
         if st.button("💎 Mentor", use_container_width=True, key="qb6"): qp="Háblame como mentor exigente y decime qué debería mejorar hoy."
+
+    st.markdown('<p style="font-size:11px;color:#64748b;margin:6px 0 2px">🌐 Búsqueda en internet:</p>', unsafe_allow_html=True)
+    wb1,wb2,wb3=st.columns(3)
+    with wb1:
+        if st.button("📊 Tendencias del rubro", use_container_width=True, key="wb1"):
+            st.session_state.neg_quick=f"Buscá las tendencias actuales del mercado de {user.get('tipo_negocio','negocios')} en Argentina para 2025. ¿Qué está creciendo?"
+    with wb2:
+        if st.button("🔍 Info de competencia", use_container_width=True, key="wb2"):
+            st.session_state.neg_quick=f"Buscá información actualizada sobre la competencia en el rubro de {user.get('tipo_negocio','negocios')} en Argentina. ¿Qué están haciendo?"
+    with wb3:
+        if st.button("💹 Precios del mercado", use_container_width=True, key="wb3"):
+            st.session_state.neg_quick=f"Buscá los precios actuales del mercado para {user.get('negocio','productos de mi rubro')} en Argentina hoy."
 
     with st.expander("📎 Adjuntar imagen o archivo (opcional)",expanded=False):
         arch=st.file_uploader("Archivo:",type=["jpg","jpeg","png","webp","pdf","txt"],label_visibility="collapsed")
