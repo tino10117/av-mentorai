@@ -914,31 +914,27 @@ with st.sidebar:
 
     st.markdown('<p class="nav-section">APRENDIZAJE</p>', unsafe_allow_html=True)
 
-    nav_items = [
-        ("mentor",    "🧠 Mentor de Negocios"),
-        ("ingles",    "📚 Aprender Inglés"),
-        ("mate",      "🔢 Aprender Matemáticas"),
-    ]
-    for key, label in nav_items:
-        activo = st.session_state.pagina == key
-        if st.button(label, key=f"nav_{key}", use_container_width=True):
-            st.session_state.pagina = key
-            st.rerun()
+    if st.button("🧠 Mentor de Negocios", key="nav_mentor", use_container_width=True):
+        st.session_state.pagina="mentor"; st.rerun()
+    if st.button("📚 Aprender Inglés", key="nav_ingles", use_container_width=True):
+        st.session_state.pagina="ingles"; st.rerun()
+    if st.button("🔢 Aprender Matemáticas", key="nav_mate", use_container_width=True):
+        st.session_state.pagina="mate"; st.rerun()
 
     st.markdown('<p class="nav-section">HERRAMIENTAS</p>', unsafe_allow_html=True)
 
-    nav_items2 = [
-        ("herramientas", "🛠️ Herramientas"),
-        ("progreso",     "📈 Progreso"),
-        ("desafios",     "🔥 Desafíos"),
-        ("premium",      "💎 Premium"),
-        ("ranking",      "🏆 Ranking"),
-        ("feedback",     "💬 Feedback"),
-    ]
-    for key, label in nav_items2:
-        if st.button(label, key=f"nav_{key}", use_container_width=True):
-            st.session_state.pagina = key
-            st.rerun()
+    if st.button("🛠️ Herramientas", key="nav_herr", use_container_width=True):
+        st.session_state.pagina="herramientas"; st.rerun()
+    if st.button("📈 Progreso", key="nav_prog", use_container_width=True):
+        st.session_state.pagina="progreso"; st.rerun()
+    if st.button("🔥 Desafíos", key="nav_des", use_container_width=True):
+        st.session_state.pagina="desafios"; st.rerun()
+    if st.button("💎 Premium", key="nav_prem", use_container_width=True):
+        st.session_state.pagina="premium"; st.rerun()
+    if st.button("🏆 Ranking", key="nav_rank", use_container_width=True):
+        st.session_state.pagina="ranking"; st.rerun()
+    if st.button("💬 Feedback", key="nav_feed", use_container_width=True):
+        st.session_state.pagina="feedback"; st.rerun()
 
     st.divider()
 
