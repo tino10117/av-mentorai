@@ -766,6 +766,15 @@ def generar_certificado_pdf(nombre, nivel, lecciones_completadas, fecha):
 # ─────────────────────────────────────────
 if "logged_in" not in st.session_state: st.session_state.logged_in=False
 
+# Leer navegación desde URL params sin perder sesión
+_params = st.query_params
+if "nav" in _params:
+    if "pagina" not in st.session_state:
+        st.session_state.pagina = _params["nav"]
+    else:
+        st.session_state.pagina = _params["nav"]
+    st.query_params.clear()
+
 if not st.session_state.logged_in:
     # HERO
     st.markdown(f'''<div style="text-align:center;padding:36px 16px 16px">
@@ -1022,30 +1031,29 @@ st.markdown(f"""
 .nav-btn.active span.label {{ color: #facc15; }}
 </style>
 <div class="nav-bottom">
-    <a class="nav-btn {'active' if pagina=='mentor' else ''}" href="?nav=mentor">
+    <div class="nav-btn {'active' if pagina=='mentor' else ''}" onclick="window.location.href=window.location.pathname+'?nav=mentor'">
         <span class="icon">🧠</span><span class="label">Mentor</span>
-    </a>
-    <a class="nav-btn {'active' if pagina=='ingles' else ''}" href="?nav=ingles">
+    </div>
+    <div class="nav-btn {'active' if pagina=='ingles' else ''}" onclick="window.location.href=window.location.pathname+'?nav=ingles'">
         <span class="icon">📚</span><span class="label">Inglés</span>
-    </a>
-    <a class="nav-btn {'active' if pagina=='mate' else ''}" href="?nav=mate">
+    </div>
+    <div class="nav-btn {'active' if pagina=='mate' else ''}" onclick="window.location.href=window.location.pathname+'?nav=mate'">
         <span class="icon">🔢</span><span class="label">Mate</span>
-    </a>
-    <a class="nav-btn {'active' if pagina=='herramientas' else ''}" href="?nav=herramientas">
+    </div>
+    <div class="nav-btn {'active' if pagina=='herramientas' else ''}" onclick="window.location.href=window.location.pathname+'?nav=herramientas'">
         <span class="icon">🛠️</span><span class="label">Herramientas</span>
-    </a>
-    <a class="nav-btn {'active' if pagina=='progreso' else ''}" href="?nav=progreso">
+    </div>
+    <div class="nav-btn {'active' if pagina=='progreso' else ''}" onclick="window.location.href=window.location.pathname+'?nav=progreso'">
         <span class="icon">📈</span><span class="label">Progreso</span>
-    </a>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Leer navegación desde URL params
+# Leer navegación desde URL params - NO hace rerun para no perder sesión
 params = st.query_params
-if "nav" in params:
+if "nav" in params and st.session_state.get("logged_in"):
     st.session_state.pagina = params["nav"]
     st.query_params.clear()
-    st.rerun()
 
 # Crear variables para cada "tab" usando contenedores condicionales
 tab_mentor = None; tab_english = None; tab_mate = None; tab_herramientas = None
