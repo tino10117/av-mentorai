@@ -2137,4 +2137,4 @@ Generá contenido que realmente venda, no genérico."""
             st.write("")
 
         st.divider()
-        st.markdown('<div class="card"><p class="small-text">💡 <b>¿Usás alguna de estas herramientas?</b> Contale al mentor de negocios cuál usás y te ayuda a sacarle el máximo provecho.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><p class="small-text">💡 <b>¿Usás alguna de estas herramientas?</b> Contale al mentor de negocios cuál usás y te ayuda a sacarle el máximo provecho.</p></div>', unsafe_allow_html=True) 
