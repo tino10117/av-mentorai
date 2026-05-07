@@ -1036,12 +1036,17 @@ if tab_mentor is not None:
             try: vp=transcribir_audio(audio); st.success(f"Escuché: *{vp}*")
             except Exception as e: st.warning(f"Error: {e}")
 
-    ui=st.chat_input("✍️ Escribí tu pregunta acá...")
+    # Procesar botón rápido ANTES del chat_input
+    if st.session_state.get("neg_quick"):
+        _nq = st.session_state.neg_quick
+        st.session_state.neg_quick = None
+        enviar_negocio(_nq, desafio)
+
+    # Procesar audio
     if vp:
-        ui=vp
-    elif st.session_state.get("neg_quick"):
-        ui=st.session_state.neg_quick
-        st.session_state.neg_quick=None
+        enviar_negocio(vp, desafio)
+
+    ui=st.chat_input("✍️ Escribí tu pregunta acá...")
     if ui:
         ib64=im=na=None
         if arch:
@@ -1286,16 +1291,18 @@ if tab_english is not None:
                 try: ve=transcribir_audio(audio_eng); st.info(f"Transcribí: *{ve}*")
                 except: pass
 
-        ei=st.chat_input("✍️ Escribile a Alex acá...")
+        # Procesar botón rápido ANTES del chat_input
+        if st.session_state.get("eng_quick"):
+            _eq = st.session_state.eng_quick
+            st.session_state.eng_quick = None
+            enviar_english(_eq, modo="chat", lista_msgs_key="english_messages")
 
-        # Prioridad: audio > botón rápido > texto
+        # Procesar audio ANTES del chat_input
         if ve:
-            ei=f"Grabé esto en inglés: '{ve}'. ¿Está bien dicho? Corregime si hay errores."
-        elif st.session_state.get("eng_quick"):
-            ei=st.session_state.eng_quick
-            st.session_state.eng_quick=None
+            enviar_english(f"Grabé esto en inglés: '{ve}'. ¿Está bien dicho? Corregime si hay errores.", modo="chat", lista_msgs_key="english_messages")
 
-        if ei: enviar_english(ei,modo="chat",lista_msgs_key="english_messages")
+        ei=st.chat_input("✍️ Escribile a Alex acá...")
+        if ei: enviar_english(ei, modo="chat", lista_msgs_key="english_messages")
 
         if st.button("🗑️ Borrar chat de Alex"): user["english_messages"]=[]; guardar_usuario(user); st.rerun()
 
@@ -1957,10 +1964,13 @@ if tab_mate is not None:
             if st.button("🎯 Dame un ejercicio", key="bmate5"): st.session_state.mate_quick="Dame un ejercicio de matemáticas de negocios para practicar."
             if st.button("🔢 Regla de tres", key="bmate6"): st.session_state.mate_quick="Explicame la regla de tres con ejemplos de ventas y productos."
 
-        mate_input = st.chat_input("✍️ Preguntale a Bruno acá...")
+        # Procesar botón rápido ANTES del chat_input
         if st.session_state.get("mate_quick"):
-            mate_input = st.session_state.mate_quick
+            _mq = st.session_state.mate_quick
             st.session_state.mate_quick = None
+            enviar_mate(_mq)
+
+        mate_input = st.chat_input("✍️ Preguntale a Bruno acá...")
         if mate_input:
             enviar_mate(mate_input)
         if False:
