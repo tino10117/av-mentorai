@@ -2286,6 +2286,140 @@ Generá contenido que realmente venda, no genérico."""
         st.divider()
         st.markdown('<div class="card"><p class="small-text">💡 <b>¿Usás alguna de estas herramientas?</b> Contale al mentor de negocios cuál usás y te ayuda a sacarle el máximo provecho.</p></div>', unsafe_allow_html=True)
 
+    # ── PLANTILLAS ──
+    if herr_sel == "Plantillas":
+        st.markdown("### 📋 Plantillas descargables")
+        st.caption("Copiá y usá estas plantillas hoy mismo. Están listas para adaptar a tu negocio.")
+        plant_sel = st.selectbox("Elegí una plantilla:", list(PLANTILLAS.keys()), key="pl3_sel")
+        if plant_sel:
+            contenido_p = PLANTILLAS[plant_sel]
+            st.markdown(f'<div style="background:rgba(15,23,42,.95);border:1px solid rgba(250,204,21,.3);border-radius:16px;padding:20px;white-space:pre-wrap;font-size:13px;color:#f1f5f9;line-height:1.6">{contenido_p}</div>', unsafe_allow_html=True)
+            st.code(contenido_p, language=None)
+            st.download_button("⬇️ Descargar plantilla", data=contenido_p,
+                file_name="plantilla.txt", mime="text/plain", key="pl3_dl")
+        st.divider()
+        st.markdown("**✍️ Personalizar con IA**")
+        mi_neg_p = st.text_area("Describí tu negocio:", placeholder="Ej: vendo ropa de mujer por Instagram", height=80, key="pl3_neg")
+        if st.button("🪄 Personalizar", key="pl3_btn") and mi_neg_p.strip():
+            prompt_p = f"Adaptá esta plantilla para el negocio: {mi_neg_p}. Plantilla: {PLANTILLAS[plant_sel]}. Adaptá todos los campos con info realista."
+            with st.spinner("Personalizando..."):
+                try:
+                    r = client.chat.completions.create(model="gpt-4o-mini",
+                        messages=[{"role":"system","content":"Experto en marketing LATAM. Adaptás plantillas de forma concreta."},
+                                  {"role":"user","content":prompt_p}], max_tokens=600)
+                    resp_p = r.choices[0].message.content
+                    st.markdown(f'<div class="card" style="border-color:rgba(34,197,94,.4);white-space:pre-wrap">{resp_p}</div>', unsafe_allow_html=True)
+                    st.code(resp_p, language=None)
+                    st.download_button("⬇️ Descargar personalizada", data=resp_p, file_name="plantilla_personalizada.txt", mime="text/plain", key="pl3_dl2")
+                    sumar_xp(10)
+                except Exception as e: st.error(f"Error: {e}")
+
+    # ── MARCA PERSONAL ──
+    if herr_sel == "Marca personal":
+        st.markdown("### 🎨 Creador de marca personal")
+        st.caption("La IA te ayuda a crear tu identidad: nombre, bio, colores y estilo para Instagram.")
+        c1m, c2m = st.columns(2)
+        with c1m:
+            marca_rubro = st.text_input("¿Qué vendés o a qué te dedicás?", placeholder="Ej: vendo ropa de mujer, soy fotógrafo", key="mp3_rubro")
+            marca_publico = st.text_input("¿A quién le vendés?", placeholder="Ej: mujeres jóvenes, empresas pequeñas", key="mp3_pub")
+        with c2m:
+            marca_estilo = st.selectbox("Estilo de tu marca:", ["Moderno y minimalista","Divertido y colorido","Elegante y premium","Cercano y familiar","Joven y urbano"], key="mp3_estilo")
+            marca_ciudad = st.text_input("¿De dónde sos?", placeholder="Ej: Buenos Aires, Córdoba", key="mp3_ciudad")
+        if st.button("🎨 Crear mi marca", key="mp3_btn") and marca_rubro.strip():
+            prompt_m = f"Creá una identidad de marca completa. Rubro: {marca_rubro}. Público: {marca_publico}. Estilo: {marca_estilo}. Ciudad: {marca_ciudad}. Dame: 5 nombres creativos, bio para Instagram (español e inglés), 3 colores con códigos hex, estilo visual, 10 hashtags en español + 5 en inglés, frase de marca, tono de comunicación."
+            with st.spinner("🎨 Creando tu marca..."):
+                try:
+                    r = client.chat.completions.create(model="gpt-4o",
+                        messages=[{"role":"system","content":"Experto en branding y marketing digital para LATAM. Creás identidades de marca modernas y auténticas."},
+                                  {"role":"user","content":prompt_m}],
+                        temperature=0.9, max_tokens=1200)
+                    resp_m = r.choices[0].message.content
+                    st.markdown(f'<div class="card" style="border-color:rgba(168,85,247,.4);white-space:pre-wrap;line-height:1.7">{resp_m}</div>', unsafe_allow_html=True)
+                    st.download_button("⬇️ Descargar mi marca", data=resp_m, file_name="mi_marca.txt", mime="text/plain", key="mp3_dl")
+                    sumar_xp(15)
+                    guardar_usuario(st.session_state.user_data)
+                except Exception as e: st.error(f"Error: {e}")
+
+    # ── FINANZAS PERSONALES ──
+    if herr_sel == "Finanzas":
+        st.markdown("### 💰 Finanzas personales con IA")
+        st.caption("Controlá tu plata, armá tu presupuesto y tomá mejores decisiones financieras.")
+        fin_opcion = st.radio("¿Qué querés hacer?",
+            ["Armar mi presupuesto", "Simulador de decisiones", "Calculadora de ahorro", "¿Cuánto necesito ganar?"],
+            key="fin3_opcion", horizontal=True)
+
+        if fin_opcion == "Armar mi presupuesto":
+            fin_ingreso = st.number_input("💵 Ingreso mensual ($):", min_value=0, step=1000, key="fin3_ing")
+            c1f, c2f = st.columns(2)
+            with c1f:
+                fin_alquiler = st.number_input("🏠 Alquiler:", min_value=0, step=1000, key="fin3_alq")
+                fin_comida = st.number_input("🍕 Comida:", min_value=0, step=1000, key="fin3_com")
+                fin_transporte = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="fin3_trans")
+            with c2f:
+                fin_servicios = st.number_input("💡 Servicios:", min_value=0, step=1000, key="fin3_serv")
+                fin_entretenimiento = st.number_input("🎬 Entretenimiento:", min_value=0, step=1000, key="fin3_ent")
+                fin_otros = st.number_input("📦 Otros:", min_value=0, step=1000, key="fin3_otros")
+            if st.button("📊 Analizar mis finanzas", key="fin3_btn"):
+                total = fin_alquiler+fin_comida+fin_transporte+fin_servicios+fin_entretenimiento+fin_otros
+                saldo = fin_ingreso - total
+                pct = (saldo/fin_ingreso*100) if fin_ingreso > 0 else 0
+                r1,r2,r3 = st.columns(3)
+                with r1: st.metric("💵 Ingresos", f"${fin_ingreso:,.0f}")
+                with r2: st.metric("💸 Gastos", f"${total:,.0f}")
+                with r3: st.metric("💰 Saldo", f"${saldo:,.0f}", f"{pct:.1f}% ahorro")
+                if saldo < 0: st.error(f"⚠️ Gastás ${abs(saldo):,.0f} más de lo que ganás.")
+                elif pct < 10: st.warning("⚠️ Tu ahorro es bajo. Lo ideal es el 20%.")
+                else: st.success(f"✅ Estás ahorrando {pct:.1f}% de tus ingresos.")
+                prompt_fin = f"Ingresos: ${fin_ingreso}. Gastos: alquiler ${fin_alquiler}, comida ${fin_comida}, transporte ${fin_transporte}, servicios ${fin_servicios}, entretenimiento ${fin_entretenimiento}, otros ${fin_otros}. Saldo: ${saldo}. Dame diagnóstico, 3 gastos donde recortar y cómo llegar al 20% de ahorro."
+                with st.spinner("Analizando..."):
+                    try:
+                        r = client.chat.completions.create(model="gpt-4o-mini",
+                            messages=[{"role":"system","content":"Asesor financiero personal para Argentina. Consejos prácticos y directos."},
+                                      {"role":"user","content":prompt_fin}], max_tokens=500)
+                        st.markdown(f'<div class="card" style="border-color:rgba(34,197,94,.4)">{r.choices[0].message.content}</div>', unsafe_allow_html=True)
+                    except Exception as e: st.error(f"Error: {e}")
+
+        elif fin_opcion == "Simulador de decisiones":
+            dilema = st.text_area("¿Qué decisión tenés que tomar?",
+                placeholder="Ej: ¿Me conviene comprar un auto de $500.000 en cuotas o invertir en mi negocio?", height=100, key="fin3_dilema")
+            ctx = st.text_input("Tu situación actual (opcional):", placeholder="Ej: gano $150.000/mes, tengo $80.000 ahorrados", key="fin3_ctx")
+            if st.button("🤔 Analizar decisión", key="fin3_btn_dil") and dilema.strip():
+                prompt_d = f"Analizá esta decisión: {dilema}. Situación: {ctx or 'no especificada'}. Dame: pros y contras de cada opción, qué pasa en 3/6/12 meses, tu recomendación clara y una acción concreta para HOY."
+                with st.spinner("Analizando..."):
+                    try:
+                        r = client.chat.completions.create(model="gpt-4o",
+                            messages=[{"role":"system","content":"Asesor financiero experto para Argentina. Análisis claros y honestos."},
+                                      {"role":"user","content":prompt_d}], max_tokens=700)
+                        st.markdown(f'<div class="card" style="border-color:rgba(250,204,21,.4)">{r.choices[0].message.content}</div>', unsafe_allow_html=True)
+                        sumar_xp(10)
+                    except Exception as e: st.error(f"Error: {e}")
+
+        elif fin_opcion == "Calculadora de ahorro":
+            meta_nom = st.text_input("Meta de ahorro:", placeholder="Ej: viaje, auto, negocio propio", key="fin3_meta")
+            c1a, c2a = st.columns(2)
+            with c1a: meta_mont = st.number_input("¿Cuánto necesitás? ($):", min_value=0, step=1000, key="fin3_mont")
+            with c2a: aho_mens = st.number_input("¿Cuánto ahorrás por mes? ($):", min_value=0, step=1000, key="fin3_aho")
+            if st.button("💸 Calcular", key="fin3_btn_aho") and meta_mont > 0 and aho_mens > 0:
+                meses = meta_mont / aho_mens
+                st.success(f"Para ahorrar ${meta_mont:,.0f} ahorrando ${aho_mens:,.0f}/mes necesitás **{meses:.0f} meses** ({meses/12:.1f} años).")
+                if meses > 24: st.info(f"Para lograrlo en 1 año necesitarías ${meta_mont/12:,.0f}/mes.")
+
+        elif fin_opcion == "¿Cuánto necesito ganar?":
+            c1g, c2g = st.columns(2)
+            with c1g:
+                g_alq = st.number_input("🏠 Alquiler:", min_value=0, step=1000, key="fin3_galq")
+                g_com = st.number_input("🍕 Comida:", min_value=0, step=1000, key="fin3_gcom")
+                g_trans = st.number_input("🚌 Transporte:", min_value=0, step=1000, key="fin3_gtrans")
+            with c2g:
+                g_serv = st.number_input("💡 Servicios:", min_value=0, step=1000, key="fin3_gserv")
+                g_ocio = st.number_input("🎬 Ocio:", min_value=0, step=1000, key="fin3_gocio")
+                g_aho = st.number_input("💰 Ahorro deseado:", min_value=0, step=1000, key="fin3_gaho")
+            if st.button("📈 Calcular", key="fin3_btn_gan"):
+                total = g_alq+g_com+g_trans+g_serv+g_ocio+g_aho
+                st.success(f"**Necesitás ganar al menos ${total:,.0f}/mes**")
+                st.info(f"Con 30% de margen de seguridad: **${total*1.3:,.0f}/mes**")
+                st.caption(f"Eso es ${total/22:,.0f} por día hábil.")
+
 PLANTILLAS = {
     "📞 Guión de venta por WhatsApp": """Hola [Nombre]! 👋
 
