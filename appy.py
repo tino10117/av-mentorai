@@ -605,6 +605,24 @@ def enviar_english(ui,leccion=None,modo="chat",lista_msgs_key="english_messages"
     if len(user[lista_msgs_key])>40: user[lista_msgs_key]=user[lista_msgs_key][-40:]
     guardar_usuario(user); st.rerun()
 
+def enviar_mate(ui, leccion=None):
+    user=st.session_state.user_data
+    if ui==st.session_state.get("last_mate",""): return
+    st.session_state.last_mate=ui
+    if "mate_messages" not in user: user["mate_messages"]=[]
+    user["mate_messages"].append({"role":"user","content":ui})
+    hist=[{"role":m["role"],"content":m["content"]} for m in user["mate_messages"][-12:]]
+    with st.spinner("🔢 Bruno está calculando..."):
+        try:
+            r=client.chat.completions.create(model="gpt-4o",
+                messages=[{"role":"system","content":system_mate(user,leccion)},*hist],
+                temperature=0.8,max_tokens=800)
+            resp=r.choices[0].message.content
+        except Exception as e: resp=f"Error: {e}"
+    user["mate_messages"].append({"role":"assistant","content":resp})
+    if len(user["mate_messages"])>40: user["mate_messages"]=user["mate_messages"][-40:]
+    guardar_usuario(user); st.rerun()
+
 def generar_resumen(user):
     if not user["messages"]: return "No hay conversación aún."
     texto="\n".join([f'{m["role"]}: {m["content"]}' for m in user["messages"][-8:]])
@@ -1649,7 +1667,7 @@ with tab_mate:
                 st.success(f"**Margen:** {margen:.1f}%")
                 st.success(f"**Markup:** {markup:.1f}%")
                 prompt = f"Mi producto cuesta ${costo} y lo vendo a ${precio}. La ganancia es ${ganancia:.0f}, el margen es {margen:.1f}% y el markup es {markup:.1f}%. Explicame si esto está bien para mi negocio y qué me recomendás."
-                enviar_english(prompt, modo="calculadora", lista_msgs_key="mate_messages")
+                enviar_mate(prompt, leccion="Calculadora de negocios")
 
         elif calc_tipo == "⚖️ Punto de equilibrio":
             cf = st.number_input("Costos fijos mensuales ($):", min_value=0.0, step=1000.0, key="calc_cf")
@@ -1662,7 +1680,7 @@ with tab_mate:
                 st.success(f"**Punto de equilibrio:** {pe:.0f} unidades por mes")
                 st.success(f"**En pesos:** ${pe_pesos:,.0f} por mes")
                 prompt = f"Mis costos fijos son ${cf}, vendo a ${pv} y el costo variable es ${cv}. Mi punto de equilibrio es {pe:.0f} unidades (${pe_pesos:,.0f}). Explicame qué significa y si mi negocio está bien."
-                enviar_english(prompt, modo="calculadora", lista_msgs_key="mate_messages")
+                enviar_mate(prompt, leccion="Calculadora de negocios")
 
         elif calc_tipo == "📈 ROI de una inversión":
             inversion = st.number_input("Inversión realizada ($):", min_value=0.0, step=1000.0, key="calc_inv")
@@ -1676,7 +1694,7 @@ with tab_mate:
                 elif roi > 20: st.info("👍 Buen ROI")
                 else: st.warning("⚠️ ROI bajo, revisá la estrategia")
                 prompt = f"Invertí ${inversion} y obtuve ${retorno}. Mi ganancia fue ${ganancia_roi:.0f} y el ROI es {roi:.1f}%. ¿Es bueno esto para mi negocio?"
-                enviar_english(prompt, modo="calculadora", lista_msgs_key="mate_messages")
+                enviar_mate(prompt, leccion="Calculadora de negocios")
 
         elif calc_tipo == "🏷️ Precio de venta ideal":
             costo_p = st.number_input("Costo del producto ($):", min_value=0.0, step=100.0, key="calc_costo_p")
@@ -1687,7 +1705,7 @@ with tab_mate:
                 st.success(f"**Precio ideal:** ${precio_ideal:,.0f}")
                 st.success(f"**Ganancia por unidad:** ${ganancia_p:,.0f}")
                 prompt = f"Mi producto cuesta ${costo_p} y quiero un margen del {margen_d}%. El precio ideal es ${precio_ideal:.0f} con una ganancia de ${ganancia_p:.0f} por unidad. ¿Me das consejos para fijar este precio?"
-                enviar_english(prompt, modo="calculadora", lista_msgs_key="mate_messages")
+                enviar_mate(prompt, leccion="Calculadora de negocios")
 
         elif calc_tipo == "📊 Proyección de ventas":
             ventas_act = st.number_input("Ventas actuales mensuales ($):", min_value=0.0, step=1000.0, key="calc_vact")
@@ -1706,7 +1724,7 @@ with tab_mate:
         else:  # Problema personalizado
             problema = st.text_area("Describí tu problema o cálculo:", placeholder="Ej: Compré 50 remeras a $1.500 cada una, las quiero vender con 45% de margen. ¿A qué precio las pongo?", height=100, key="calc_problema")
             if st.button("Resolver con Bruno 🔢", key="btn_problema") and problema.strip():
-                enviar_english(problema, modo="calculadora", lista_msgs_key="mate_messages")
+                enviar_mate(problema, leccion="Calculadora de negocios")
 
         # Mostrar respuesta de Bruno
         mate_msgs = user.get("mate_messages", [])
@@ -1753,12 +1771,14 @@ with tab_mate:
         mate_input = st.chat_input("Preguntale a Bruno sobre matemáticas...")
         if bq_mate: mate_input = bq_mate
         if mate_input:
+            enviar_mate(mate_input)
+        if False:
             mate_lsel2 = st.session_state.get("mate_leccion_sel", None)
             lec_ctx = None
             if mate_lsel2:
                 lo2 = next((l for l in lecs_mate_niv if l["id"] == mate_lsel2), None)
                 if lo2: lec_ctx = lo2["titulo"]
-            enviar_english(mate_input, leccion=lec_ctx, modo="chat", lista_msgs_key="mate_messages")
+            enviar_mate(mate_input, leccion=lec_ctx)
 
         if st.button("🗑️ Borrar chat de Bruno", key="borrar_mate"):
             user["mate_messages"] = []; guardar_usuario(user); st.rerun()
