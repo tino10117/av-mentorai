@@ -2240,18 +2240,21 @@ PRECIO: {gen_precio or 'No especificado'}
 QUÉ LO HACE ESPECIAL: {gen_beneficio or 'No especificado'}
 TONO: {gen_tono}
 
-Reglas:
-- Escribí en español latino argentino
-- Incluí emojis si corresponde al canal
-- Usá hashtags relevantes si es Instagram o TikTok
-- Sé específico y persuasivo
-- Incluí un call to action claro al final
-- Cada versión separada claramente con "--- VERSIÓN X ---"
-- Para WhatsApp: formato corto y directo, máximo 5 líneas
-- Para Mercado Libre: incluí título optimizado + descripción detallada
-- Para Instagram: incluí caption completo + hashtags
+Reglas IMPORTANTES:
+- Español latino argentino, natural y cercano
+- Cada versión tiene un enfoque DIFERENTE (ej: una emocional, una urgente, una informativa)
+- Emojis estratégicos, no exagerados
+- Hashtags específicos del nicho si es Instagram o TikTok
+- Call to action claro y directo al final
+- Cada versión separada con "--- VERSIÓN X ---"
+- WhatsApp: corto, directo, máximo 6 líneas, como un mensaje de amigo
+- Mercado Libre: título con palabras clave SEO + descripción detallada con bullets
+- Instagram: caption que genere engagement + hashtags de nicho (no genéricos)
+- TikTok: hook en primera línea, energético y viral
+- Email: asunto atractivo + cuerpo breve y persuasivo
 
-Generá contenido que realmente venda, no genérico."""
+IMPORTANTE: Cada versión debe ser NOTABLEMENTE diferente a las otras. No copies la misma estructura.
+Generá contenido que la gente quiera leer y que realmente venda."""
 
                 user = st.session_state.user_data
                 with st.spinner("✍️ Generando contenido..."):
@@ -2259,7 +2262,7 @@ Generá contenido que realmente venda, no genérico."""
                         r = client.chat.completions.create(
                             model="gpt-4o",
                             messages=[
-                                {"role": "system", "content": f"Sos un experto en marketing digital y copywriting para LATAM. Creás contenido que vende de verdad para redes sociales, WhatsApp y marketplaces. Conocés bien el mercado argentino."},
+                                {"role": "system", "content": f"Sos el mejor copywriter de LATAM. Escribís contenido que vende, engancha y genera acción. Conocés el mercado argentino, el lenguaje de la gente joven y cómo hablar de forma auténtica en cada plataforma. Tu contenido nunca suena a publicidad genérica — suena real, cercano y efectivo."},
                                 {"role": "user", "content": prompt_gen}
                             ],
                             temperature=0.9, max_tokens=1500
@@ -2276,30 +2279,49 @@ Generá contenido que realmente venda, no genérico."""
 
         if st.session_state.get("ultimo_contenido"):
             st.divider()
-            st.markdown(f"### 📋 Contenido generado para {st.session_state.get('ultimo_gen_tipo','')}")
-            
+            tipo_mostrar = st.session_state.get("ultimo_gen_tipo","")
+            st.markdown(f"### ✅ Contenido listo para {tipo_mostrar}")
+
             versiones = st.session_state.ultimo_contenido.split("--- VERSIÓN")
             if len(versiones) > 1:
                 for i, v in enumerate(versiones[1:], 1):
                     v_limpia = v.replace(f" {i} ---", "").strip()
-                    with st.expander(f"📄 Versión {i}", expanded=True):
-                        st.markdown(f'<div class="card" style="border-color:rgba(168,85,247,.4);white-space:pre-wrap">{v_limpia}</div>', unsafe_allow_html=True)
-                        st.code(v_limpia, language=None)
+                    # Mostrar solo la card limpia, sin duplicar con st.code
+                    st.markdown(f"""
+                    <div style="background:rgba(15,23,42,.95);border:1px solid rgba(168,85,247,.4);
+                    border-radius:16px;padding:20px;margin-bottom:12px;position:relative">
+                        <div style="font-size:11px;color:#a855f7;font-weight:700;margin-bottom:10px;text-transform:uppercase">
+                            VERSIÓN {i}
+                        </div>
+                        <div style="color:#f1f5f9;font-size:14px;line-height:1.7;white-space:pre-wrap">{v_limpia}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    # Botón copiar para cada versión
+                    st.code(v_limpia, language=None)
+                    st.write("")
             else:
-                st.markdown(f'<div class="card" style="border-color:rgba(168,85,247,.4);white-space:pre-wrap">{st.session_state.ultimo_contenido}</div>', unsafe_allow_html=True)
-                st.code(st.session_state.ultimo_contenido, language=None)
+                contenido = st.session_state.ultimo_contenido
+                st.markdown(f"""
+                <div style="background:rgba(15,23,42,.95);border:1px solid rgba(168,85,247,.4);
+                border-radius:16px;padding:20px;margin-bottom:12px">
+                    <div style="color:#f1f5f9;font-size:14px;line-height:1.7;white-space:pre-wrap">{contenido}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                st.code(contenido, language=None)
 
-            st.download_button(
-                "⬇️ Descargar contenido",
-                data=st.session_state.ultimo_contenido,
-                file_name=f"contenido_{gen_producto.lower().replace(' ','_')}.txt",
-                mime="text/plain",
-                key="dl_contenido"
-            )
-
-            if st.button("🔄 Generar nuevas versiones", key="btn_regen"):
-                st.session_state.ultimo_contenido = None
-                st.rerun()
+            col_dl, col_regen = st.columns(2)
+            with col_dl:
+                st.download_button(
+                    "⬇️ Descargar todo",
+                    data=st.session_state.ultimo_contenido,
+                    file_name=f"contenido_{gen_producto.lower().replace(' ','_')}.txt",
+                    mime="text/plain",
+                    key="dl_contenido"
+                )
+            with col_regen:
+                if st.button("🔄 Nueva versión", key="btn_regen", use_container_width=True):
+                    st.session_state.ultimo_contenido = None
+                    st.rerun()
 
     # ── AFILIADOS ──
     if herr_sel == "Afiliados":
